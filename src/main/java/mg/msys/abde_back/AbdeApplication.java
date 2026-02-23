@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class AbdeApplication {
 
 	public static void main(String[] args) {
-		SpringApplicatio.run(AbdeApplication.class, args);
+		SpringApplication.run(AbdeApplication.class, args);
 	}
 
 }
