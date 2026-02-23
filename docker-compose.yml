@@ -1,0 +1,25 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: springboot-dev
+    ports:
+      - "8080:8080"
+      - "5005:5005"
+    volumes:
+      - .:/app
+      - ~/.m2:/root/.m2
+    networks:
+      - dev-net
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    command: >
+      mvn spring-boot:run
+      -Dspring-boot.run.fork=false
+      -Dspring-boot.run.jvmArguments="
+      -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+      
+networks:
+  dev-net:
+    driver: bridge
