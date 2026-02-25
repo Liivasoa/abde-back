@@ -1,4 +1,24 @@
 services:
+  postgres:
+    image: postgres:18.1-alpine
+    container_name: postgres-dev
+    environment:
+      POSTGRES_DB: abde-dev
+      POSTGRES_USER: abdeuser
+      POSTGRES_PASSWORD: abdepassword
+    ports:
+      - "5432:5432" # Accès local à la BDD
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - dev-net
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "abdeuser", "-d", "abde-dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
   app:
     build:
       context: .
@@ -14,11 +34,33 @@ services:
       - dev-net
     environment:
       - SPRING_PROFILES_ACTIVE=dev
+    depends_on:
+      - postgres
     command: >
       mvn spring-boot:run
       -Dspring-boot.run.fork=false
       -Dspring-boot.run.jvmArguments="
       -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: bank-account-pgadmin-dev
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@dev.fr
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    ports:
+      - "5050:80"  # Interface web : http://localhost:5050
+    depends_on:
+      - postgres
+    networks:
+      - dev-net
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
+volumes:
+  pgdata:
+  pgadmin_data:
       
 networks:
   dev-net:
