@@ -1,8 +1,8 @@
-name: CI - Spring Boot
+name: dev pipeline
 
 on:
   push:
-    branches: [ "**"]
+    branches: [ "main"]
   pull_request:
     branches: [ "main" ]
 
