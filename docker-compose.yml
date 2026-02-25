@@ -1,7 +1,7 @@
 services:
   postgres:
     image: postgres:18.1-alpine
-    container_name: postgres-dev
+    container_name: postgres-c-dev
     environment:
       POSTGRES_DB: abde-dev
       POSTGRES_USER: abdeuser
@@ -23,7 +23,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: springboot-dev
+    container_name: springboot-c-dev
     ports:
       - "8080:8080"
       - "5005:5005"
@@ -44,7 +44,7 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4
-    container_name: bank-account-pgadmin-dev
+    container_name: pgadmin-c-dev
     restart: unless-stopped
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@dev.fr
