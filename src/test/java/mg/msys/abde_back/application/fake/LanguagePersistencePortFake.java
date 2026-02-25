@@ -1,4 +1,4 @@
-package mg.msys.abde_back.application.usecase.fake;
+package mg.msys.abde_back.application.fake;
 
 import java.util.ArrayList;
 import java.util.List;
