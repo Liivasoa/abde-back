@@ -1,5 +1,7 @@
 package mg.msys.abde_back.application.port;
 
+import java.util.Optional;
+
 import mg.msys.abde_back.domain.model.Language;
 
 /**
@@ -15,5 +17,7 @@ public interface LanguagePersistencePort {
      * @return the saved language
      * @throws IllegalArgumentException if language violates business rules
      */
-    Language save(Language language);
+    void save(Language language);
+
+    Optional<Language> findByCode(String code);
 }

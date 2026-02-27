@@ -1,7 +1,5 @@
 package mg.msys.abde_back.application.usecase.language;
 
-import mg.msys.abde_back.domain.model.Language;
-
 public interface AddLanguageUseCase {
 
     /**
@@ -12,5 +10,5 @@ public interface AddLanguageUseCase {
      * @return the created language
      * @throws IllegalArgumentException if code or label is invalid
      */
-    public Language execute(String code, String label);
+    public void execute(String code, String label);
 }

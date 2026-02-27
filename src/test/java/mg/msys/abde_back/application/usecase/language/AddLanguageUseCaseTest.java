@@ -49,9 +49,10 @@ class AddLanguageUseCaseTest {
             String label = "French";
 
             // When
-            Language result = useCase.execute(code, label);
+            useCase.execute(code, label);
 
             // Then
+            Language result = fakePort.getSavedLanguages().get(0);
             assertNotNull(result);
             assertEquals("FR", result.getCode());
             assertEquals("French", result.getLabel());
@@ -81,15 +82,12 @@ class AddLanguageUseCaseTest {
             // Given
 
             // When
-            Language lang1 = useCase.execute("FR", "French");
-            Language lang2 = useCase.execute("EN", "English");
-            Language lang3 = useCase.execute("ES", "Spanish");
+            useCase.execute("FR", "French");
+            useCase.execute("EN", "English");
+            useCase.execute("ES", "Spanish");
 
             // Then
             assertEquals(3, fakePort.getSavedLanguages().size());
-            assertEquals("FR", lang1.getCode());
-            assertEquals("EN", lang2.getCode());
-            assertEquals("ES", lang3.getCode());
         }
     }
 
@@ -159,11 +157,13 @@ class AddLanguageUseCaseTest {
             // Given
 
             // When
-            Language result = useCase.execute("IT", "Italian");
+            useCase.execute("IT", "Italian");
 
             // Then
-            assertNotNull(result);
-            assertEquals("IT", result.getCode());
+            List<Language> savedLanguages = fakePort.getSavedLanguages();
+            assertNotNull(savedLanguages);
+            assertEquals(1, savedLanguages.size());
+            assertEquals("IT", savedLanguages.get(0).getCode());
         }
 
         @Test
@@ -188,30 +188,36 @@ class AddLanguageUseCaseTest {
         @DisplayName("Should handle lowercase code conversion (domain model responsibility)")
         void testLowercaseCodeHandledByDomain() {
             // When
-            Language result = useCase.execute("fr", "French");
+            useCase.execute("fr", "French");
 
             // Then
-            assertEquals("FR", result.getCode());
+            List<Language> savedLanguages = fakePort.getSavedLanguages();
+            assertEquals(1, savedLanguages.size());
+            assertEquals("FR", savedLanguages.get(0).getCode());
         }
 
         @Test
         @DisplayName("Should preserve label exactly as provided")
         void testLabelPreservedExactly() {
             // When
-            Language result = useCase.execute("FR", "Français (France)");
+            useCase.execute("FR", "Français (France)");
 
             // Then
-            assertEquals("Français (France)", result.getLabel());
+            List<Language> savedLanguages = fakePort.getSavedLanguages();
+            assertEquals(1, savedLanguages.size());
+            assertEquals("Français (France)", savedLanguages.get(0).getLabel());
         }
 
         @Test
         @DisplayName("Should work with single character code")
         void testSingleCharacterCode() {
             // When
-            Language result = useCase.execute("Z", "Zealandian");
+            useCase.execute("Z", "Zealandian");
 
             // Then
-            assertEquals("Z", result.getCode());
+            List<Language> savedLanguages = fakePort.getSavedLanguages();
+            assertEquals(1, savedLanguages.size());
+            assertEquals("Z", savedLanguages.get(0).getCode());
         }
     }
 }

@@ -10,11 +10,11 @@ public class AddLanguageService implements AddLanguageUseCase {
 
     private final LanguagePersistencePort languagePersistencePort;
 
-    public Language execute(String code, String label) {
+    public void execute(String code, String label) {
         // Create the language domain entity
         Language language = new Language(code, label);
 
         // Persist the language using the output port
-        return languagePersistencePort.save(language);
+        languagePersistencePort.save(language);
     }
 }
