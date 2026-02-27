@@ -10,7 +10,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 @ActiveProfiles("test")
 @DataJpaTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public abstract class AbstractJpaRepositoryTest {
+public abstract class AbstractAdapterTest {
 
     static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:18.1-alpine")
             .withDatabaseName("abde_test")
