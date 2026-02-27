@@ -21,6 +21,13 @@ public class LanguagePersistencePortFake implements LanguagePersistencePort {
         savedLanguages.add(language);
     }
 
+    @Override
+    public java.util.Optional<Language> findByCode(String code) {
+        return savedLanguages.stream()
+                .filter(lang -> lang.getCode().equals(code))
+                .findFirst();
+    }
+
     public List<Language> getSavedLanguages() {
         return new ArrayList<>(savedLanguages);
     }
