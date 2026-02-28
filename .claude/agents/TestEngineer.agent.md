@@ -38,3 +38,18 @@ Rules:
 - Use @SpringBootTest only for integration tests
 - Use PostgreSQL Testcontainer for database integration tests
 - Use Mockito for mocking dependencies in unit tests
+- Use descriptive test method names that clearly indicate the scenario being tested
+
+Rules for Domain tests :
+
+- Test invariants and business rules
+- Test edge cases and error conditions
+- Avoid testing getters and setters unless they contain logic
+
+Rules for Use Cases tests :
+
+- Test the main flow of the use case
+- Test alternative flows and edge cases
+- Use fake that implement output ports to verify interactions with dependencies
+- Use only one port per entity model
+- Avoid testing framework code or external libraries, focus on business logic
