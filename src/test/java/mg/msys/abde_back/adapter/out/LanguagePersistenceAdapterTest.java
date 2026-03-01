@@ -12,9 +12,9 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import mg.msys.abde_back.adapter.out.mapper.LanguageMapper;
-import mg.msys.abde_back.adapter.out.repository.LanguageJpaRepository;
 import mg.msys.abde_back.application.port.LanguagePersistencePort;
 import mg.msys.abde_back.domain.model.Language;
+import mg.msys.abde_back.infrastructure.repository.LanguageJpaRepository;
 
 public class LanguagePersistenceAdapterTest extends AbstractAdapterTest {
 

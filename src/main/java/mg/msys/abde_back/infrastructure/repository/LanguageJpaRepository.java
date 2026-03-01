@@ -1,4 +1,4 @@
-package mg.msys.abde_back.adapter.out.repository;
+package mg.msys.abde_back.infrastructure.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
