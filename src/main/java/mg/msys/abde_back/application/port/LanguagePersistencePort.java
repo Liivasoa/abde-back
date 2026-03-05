@@ -17,7 +17,7 @@ public interface LanguagePersistencePort {
      * @return the saved language
      * @throws IllegalArgumentException if language violates business rules
      */
-    void save(Language language);
+    Language save(Language language);
 
     Optional<Language> findByCode(String code);
 }

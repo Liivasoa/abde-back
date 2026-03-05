@@ -23,14 +23,15 @@ public class LanguagePersistenceAdapter implements LanguagePersistencePort {
     }
 
     @Override
-    public void save(Language language) {
+    public Language save(Language language) {
         LanguageEntity entity = languageMapper.toEntity(language);
-        languageJpaRepository.save(entity);
+        LanguageEntity savedEntity = languageJpaRepository.save(entity);
+        return languageMapper.toDomain(savedEntity);
     }
 
     @Override
     public Optional<Language> findByCode(String code) {
-        return languageJpaRepository.findById(code)
+        return languageJpaRepository.findByCode(code)
                 .map(languageMapper::toDomain);
     }
 

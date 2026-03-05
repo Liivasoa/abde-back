@@ -13,12 +13,14 @@ public class LanguagePersistencePortFake implements LanguagePersistencePort {
     private boolean shouldThrowException = false;
 
     @Override
-    public void save(Language language) {
+    public Language save(Language language) {
         if (shouldThrowException) {
             throw new IllegalArgumentException("Language already exists");
         }
         saveCallCount++;
-        savedLanguages.add(language);
+        Language savedLanguage = new Language(language.getCode(), language.getLabel());
+        savedLanguages.add(savedLanguage);
+        return savedLanguage;
     }
 
     @Override

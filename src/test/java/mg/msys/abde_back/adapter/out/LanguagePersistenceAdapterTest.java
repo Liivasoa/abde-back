@@ -92,13 +92,14 @@ public class LanguagePersistenceAdapterTest extends AbstractAdapterTest {
     @DisplayName("Should update language when saved again with same code")
     void testUpdateLanguageLabel() {
         Language language = new Language("EN", "English");
-        languagePersistencePort.save(language);
+        Language savedLanguage = languagePersistencePort.save(language);
 
-        language.setLabel("English (Updated)");
-        languagePersistencePort.save(language);
+        // Update the label and save again
+        savedLanguage.setLabel("English (Updated)");
+        Language updatedLanguage = languagePersistencePort.save(savedLanguage);
 
-        languagePersistencePort.findByCode("EN").ifPresent(savedLanguage -> {
-            assertEquals("English (Updated)", savedLanguage.getLabel());
+        languagePersistencePort.findByCode("EN").ifPresent(retrieved -> {
+            assertEquals("English (Updated)", retrieved.getLabel());
         });
     }
 
