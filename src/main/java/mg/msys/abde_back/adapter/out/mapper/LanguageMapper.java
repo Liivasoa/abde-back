@@ -6,11 +6,6 @@ import org.mapstruct.Mapper;
 import mg.msys.abde_back.adapter.out.entity.LanguageEntity;
 import mg.msys.abde_back.domain.model.Language;
 
-/**
- * Mapper interface for converting between Language domain model and
- * LanguageEntity.
- * Generated implementation will be excluded from Jacoco coverage.
- */
 @Mapper(componentModel = "spring")
 public interface LanguageMapper {
 
