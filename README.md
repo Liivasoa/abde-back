@@ -73,6 +73,7 @@ Backend microservice for the ABDE application, built with **hexagonal architectu
 | **Spring Boot** | 4.0.3 | Framework |
 | **PostgreSQL** | Latest | Database |
 | **Maven** | 3.9+ | Build tool |
+| **Flyway** | Latest | Database migrations |
 | **JUnit 5** | Latest | Unit tests |
 | **ArchUnit** | Latest | Architecture tests |
 
@@ -85,146 +86,41 @@ Backend microservice for the ABDE application, built with **hexagonal architectu
 - 📦 Maven 3.9+
 - 🐳 Docker
 
-### With Docker Compose
-
-```bash
-# Start the database
-docker-compose up -d
-
-# Wait for PostgreSQL to be ready (30 seconds)
-sleep 30
-
-# Start the application
-mvn spring-boot:run
-```
-
-### Local Setup
-
-```bash
-# 1. Configure PostgreSQL locally
-createdb abde-dev
-createuser abdeuser -P  # Password: abdepassword
-
-# 2. Compile and start
-mvn clean install
-mvn spring-boot:run
-
-# 3. Access the app
-# http://localhost:8080
-```
-
----
-
-## 📁 Project Structure
-
-```
-src/
-├── main/java/mg/msys/abde_back/
-│   ├── AbdeApplication.java              ← Spring Boot entry point
-│   │
-│   ├── domain/                           ← 🎯 BUSINESS LAYER (NO DEPENDENCIES)
-│   │   └── model/
-│   │       └── Language.java
-│   │
-│   ├── application/                      ← 🔧 ORCHESTRATION
-│   │   ├── port/                         ← Contracts (interfaces)
-│   │   │   └── LanguagePersistencePort.java
-│   │   ├── service/                      ← Use case implementations
-│   │   │   └── language/
-│   │   │       └── AddLanguageService.java
-│   │   └── usecase/                      ← Use case contracts
-│   │       └── language/
-│   │           └── AddLanguageUseCase.java
-│   │
-│   ├── adapter/                          ← 🌉 ADAPTERS
-│   │   ├── in/                           ← Inbound (REST)
-│   │   │   ├── LanguageController.java
-│   │   │   └── dto/
-│   │   │       └── LanguageDto.java
-│   │   │
-│   │   └── out/                          ← Outbound (Data)
-│   │       ├── LanguagePersistenceAdapter.java
-│   │       ├── entity/
-│   │       │   └── LanguageEntity.java
-│   │       └── mapper/
-│   │           └── LanguageMapper.java
-│   │
-│   └── infrastructure/                   ← 🔨 INFRASTRUCTURE
-│       └── repository/
-│           └── LanguageJpaRepository.java
-│
-├── test/java/mg/msys/abde_back/
-│   ├── AbdeApplicationTests.java
-│   └── HexagonalArchitectureTest.java    ← ✅ Architecture tests (26 tests)
-│
-└── resources/
-    └── application.properties
-
----
-```
-
----
-
-## 💻 Installation
-
-### 1️⃣ Clone and Compile
+### Clone and Compile
 
 ```bash
 git clone git@github.com:Liivasoa/abde-back.git
 cd abde-back
-mvn clean install
 ```
 
-### 2️⃣ Configure Database
-
-Edit `src/main/resources/application.properties` :
-
-```properties
-# Database
-spring.datasource.url=jdbc:postgresql://localhost:5432/abde-dev
-spring.datasource.username=abdeuser
-spring.datasource.password=abdepassword
-
-# Hibernate
-spring.jpa.hibernate.ddl-auto=create-drop  # ⚠️ create-drop for dev, validate for prod
-spring.jpa.show-sql=true                   # Log SQL queries
-```
-
-### 3️⃣ Start Application
+### Build and start the app
 
 ```bash
-mvn spring-boot:run
+# Start the app
+docker-compose up --build
 ```
 
-Application starts on **http://localhost:8080** 🎉
+### Debug with VS Code (Dockerized)
 
----
-
-## 📖 Usage
-
-### Available Endpoints
-
-#### 🌐 Languages
-
-**Add a language**
-```http
-POST /languages HTTP/1.1
-Content-Type: application/json
-
-{
-  "code": "FR",
-  "label": "French"
-}
-```
-
-**Response**
+1. **Add `.vscode/launch.json`**:
 ```json
 {
-  "id": "550e8400-e29b-41d4-a716-446655440000",
-  "code": "FR",
-  "label": "French"
+  "version": "0.2.0",
+  "configurations": [{
+    "name": "Attach to Docker",
+    "type": "java",
+    "request": "attach",
+    "hostName": "localhost",
+    "port": 5005
+  }]
 }
 ```
+
+2. **Start containers**: `docker-compose up`
+
+3. **Debug**: Press `F5` in VS Code → "Attach to Docker"
+
+4. **Set breakpoints**: Debug normally in editor
 
 ---
 
@@ -383,9 +279,9 @@ public class NewsController {
 
 ## 📋 Before Commit Checklist
 
-- [ ] Tests pass + coverage ok: `mvn clean verify`
-- [ ] Code formatted
-- [ ] Documentation updated
-- [ ] Clear commit messages: [XXX][YYY] commit message (XXX -> what you did: test, dev, refactor / YYY -> what part of app: domain, adapter, ...)
+- Tests pass + coverage ok: `mvn clean verify`
+- Code formatted
+- Documentation updated
+- Clear commit messages: [XXX][YYY] commit message (XXX -> what you did: test, dev, refactor / YYY -> what part of app: domain, adapter, ...)
 
 ---
