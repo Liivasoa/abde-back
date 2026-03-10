@@ -8,13 +8,6 @@ import org.springframework.stereotype.Repository;
 import mg.msys.abde_back.adapter.out.entity.LanguageEntity;
 
 @Repository
-public interface LanguageJpaRepository extends JpaRepository<LanguageEntity, Long> {
-
-    /**
-     * Find a language by its code.
-     *
-     * @param code the language code
-     * @return Optional containing the language if found
-     */
+public interface LanguageJpaRepository extends JpaRepository<LanguageEntity, String> {
     Optional<LanguageEntity> findByCode(String code);
 }
