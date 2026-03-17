@@ -2,6 +2,7 @@ package mg.msys.abde_back.batch;
 
 import javax.sql.DataSource;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.batch.core.job.Job;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
@@ -20,13 +21,18 @@ import org.springframework.batch.core.configuration.annotation.EnableBatchProces
 import org.springframework.batch.core.configuration.annotation.EnableJdbcJobRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
 @EnableBatchProcessing
 @EnableJdbcJobRepository(tablePrefix = "syst.BATCH_")
+@EnableRetry
 public class BatchConfig {
+
+    @Value("${batch.catalog.download-path:/tmp/abde/pg_catalog.csv}")
+    private String catalogDownloadPath;
 
     @Bean
     public FlatFileItemReader<Book> reader() {
@@ -34,13 +40,23 @@ public class BatchConfig {
         mapper.setTargetType(Book.class);
         return new FlatFileItemReaderBuilder<Book>()
                 .name("bookReader")
-                .resource(new ClassPathResource("pg_catalog.csv"))
+                .resource(new FileSystemResource(catalogDownloadPath))
                 .linesToSkip(1)
                 .recordSeparatorPolicy(new DefaultRecordSeparatorPolicy())
                 .delimited()
                 .includedFields(0, 2, 3, 4, 6)
                 .names("id", "issued", "title", "languages", "subjects")
                 .fieldSetMapper(mapper)
+                .build();
+    }
+
+    @Bean
+    public Step downloadCatalogStep(JobRepository jobRepository,
+            PlatformTransactionManager transactionManager,
+            DownloadCatalogTasklet downloadCatalogTasklet) {
+        return new StepBuilder("downloadCatalogStep", jobRepository)
+                .tasklet(downloadCatalogTasklet)
+                .transactionManager(transactionManager)
                 .build();
     }
 
@@ -78,9 +94,10 @@ public class BatchConfig {
     }
 
     @Bean
-    public Job importBooksJob(JobRepository jobRepository, Step step) {
+    public Job importBooksJob(JobRepository jobRepository, Step downloadCatalogStep, Step step) {
         return new JobBuilder("importBooksJob", jobRepository)
-                .start(step)
+                .start(downloadCatalogStep)
+                .next(step)
                 .build();
     }
 }
