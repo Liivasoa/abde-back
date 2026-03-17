@@ -27,21 +27,21 @@ import java.util.Map;
 public class BatchController {
 
     private final JobOperator jobOperator;
-    private final Job importBooksJob;
+    private final Job importBookJob;
 
-    @PostMapping("/import-books")
-    @Operation(summary = "Import books", description = "Triggers the books import batch from pg_catalog.csv")
+    @PostMapping("/import-book")
+    @Operation(summary = "Import book", description = "Triggers the book import batch from pg_catalog.csv")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Job started successfully"),
             @ApiResponse(responseCode = "500", description = "Job failed to start", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<Map<String, String>> importBooks() {
+    public ResponseEntity<Map<String, String>> importBook() {
         try {
             JobParameters params = new JobParametersBuilder()
                     .addLong("run.id", System.currentTimeMillis())
                     .toJobParameters();
-            jobOperator.start(importBooksJob, params);
-            return ResponseEntity.ok(Map.of("message", "Job importBooksJob started successfully"));
+            jobOperator.start(importBookJob, params);
+            return ResponseEntity.ok(Map.of("message", "Job importBookJob started successfully"));
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
                     .body(Map.of("message", "Job failed to start: " + e.getMessage()));

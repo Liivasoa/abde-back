@@ -35,6 +35,39 @@ public class BatchConfig {
     private String catalogDownloadPath;
 
     @Bean
+    public Job importBookJob(JobRepository jobRepository, Step downloadCatalogStep, Step ingestionCatalogStep) {
+        return new JobBuilder("importBookJob", jobRepository)
+                .start(downloadCatalogStep)
+                .next(ingestionCatalogStep)
+                .build();
+    }
+
+    @Bean
+    public Step downloadCatalogStep(JobRepository jobRepository,
+            PlatformTransactionManager transactionManager,
+            DownloadCatalogTasklet downloadCatalogTasklet) {
+        return new StepBuilder("downloadCatalogStep", jobRepository)
+                .tasklet(downloadCatalogTasklet)
+                .transactionManager(transactionManager)
+                .build();
+    }
+
+    @Bean
+    public Step ingestionCatalogStep(JobRepository jobRepository,
+            PlatformTransactionManager transactionManager,
+            ItemReader<Book> reader,
+            ItemProcessor<Book, Book> processor,
+            ItemWriter<Book> writer) {
+
+        return new StepBuilder("ingestionCatalogStep", jobRepository)
+                .<Book, Book>chunk(100).transactionManager(transactionManager)
+                .reader(reader)
+                .processor(processor)
+                .writer(writer)
+                .build();
+    }
+
+    @Bean
     public FlatFileItemReader<Book> reader() {
         BeanWrapperFieldSetMapper<Book> mapper = new BeanWrapperFieldSetMapper<>();
         mapper.setTargetType(Book.class);
@@ -47,16 +80,6 @@ public class BatchConfig {
                 .includedFields(0, 2, 3, 4, 6)
                 .names("id", "issued", "title", "languages", "subjects")
                 .fieldSetMapper(mapper)
-                .build();
-    }
-
-    @Bean
-    public Step downloadCatalogStep(JobRepository jobRepository,
-            PlatformTransactionManager transactionManager,
-            DownloadCatalogTasklet downloadCatalogTasklet) {
-        return new StepBuilder("downloadCatalogStep", jobRepository)
-                .tasklet(downloadCatalogTasklet)
-                .transactionManager(transactionManager)
                 .build();
     }
 
@@ -78,26 +101,4 @@ public class BatchConfig {
                 .build();
     }
 
-    @Bean
-    public Step step(JobRepository jobRepository,
-            PlatformTransactionManager transactionManager,
-            ItemReader<Book> reader,
-            ItemProcessor<Book, Book> processor,
-            ItemWriter<Book> writer) {
-
-        return new StepBuilder("step1", jobRepository)
-                .<Book, Book>chunk(100).transactionManager(transactionManager)
-                .reader(reader)
-                .processor(processor)
-                .writer(writer)
-                .build();
-    }
-
-    @Bean
-    public Job importBooksJob(JobRepository jobRepository, Step downloadCatalogStep, Step step) {
-        return new JobBuilder("importBooksJob", jobRepository)
-                .start(downloadCatalogStep)
-                .next(step)
-                .build();
-    }
 }
