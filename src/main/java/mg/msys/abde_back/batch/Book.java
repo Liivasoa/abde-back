@@ -10,5 +10,6 @@ public class Book {
     private String issued;
     private String title;
     private String languages;
+    private String authors;
     private String subjects;
 }
