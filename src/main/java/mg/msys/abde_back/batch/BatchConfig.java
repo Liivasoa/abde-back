@@ -11,8 +11,6 @@ import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.infrastructure.item.ItemProcessor;
 import org.springframework.batch.infrastructure.item.ItemReader;
 import org.springframework.batch.infrastructure.item.ItemWriter;
-import org.springframework.batch.infrastructure.item.database.JdbcBatchItemWriter;
-import org.springframework.batch.infrastructure.item.database.builder.JdbcBatchItemWriterBuilder;
 import org.springframework.batch.infrastructure.item.file.FlatFileItemReader;
 import org.springframework.batch.infrastructure.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.infrastructure.item.file.mapping.BeanWrapperFieldSetMapper;
@@ -21,11 +19,13 @@ import org.springframework.batch.core.configuration.annotation.EnableBatchProces
 import org.springframework.batch.core.configuration.annotation.EnableJdbcJobRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.transaction.PlatformTransactionManager;
+
+import mg.msys.abde_back.batch.entity.GutenbergBook;
+import mg.msys.abde_back.batch.task.CatalogBookWriter;
+import mg.msys.abde_back.batch.task.DownloadCatalogTasklet;
 
 @Configuration
 @EnableBatchProcessing
@@ -57,12 +57,12 @@ public class BatchConfig {
     @Bean
     public Step ingestionCatalogStep(JobRepository jobRepository,
             PlatformTransactionManager transactionManager,
-            ItemReader<Book> reader,
-            ItemProcessor<Book, Book> processor,
-            ItemWriter<Book> writer) {
+            ItemReader<GutenbergBook> reader,
+            ItemProcessor<GutenbergBook, GutenbergBook> processor,
+            ItemWriter<GutenbergBook> writer) {
 
         return new StepBuilder("ingestionCatalogStep", jobRepository)
-                .<Book, Book>chunk(100).transactionManager(transactionManager)
+                .<GutenbergBook, GutenbergBook>chunk(100).transactionManager(transactionManager)
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)
@@ -70,10 +70,10 @@ public class BatchConfig {
     }
 
     @Bean
-    public FlatFileItemReader<Book> reader() {
-        BeanWrapperFieldSetMapper<Book> mapper = new BeanWrapperFieldSetMapper<>();
-        mapper.setTargetType(Book.class);
-        return new FlatFileItemReaderBuilder<Book>()
+    public FlatFileItemReader<GutenbergBook> reader() {
+        BeanWrapperFieldSetMapper<GutenbergBook> mapper = new BeanWrapperFieldSetMapper<>();
+        mapper.setTargetType(GutenbergBook.class);
+        return new FlatFileItemReaderBuilder<GutenbergBook>()
                 .name("bookReader")
                 // .resource(new ClassPathResource("pg_catalog.csv"))
                 .resource(new FileSystemResource(catalogDownloadPath))
@@ -87,7 +87,7 @@ public class BatchConfig {
     }
 
     @Bean
-    public ItemProcessor<Book, Book> processor() {
+    public ItemProcessor<GutenbergBook, GutenbergBook> processor() {
         return book -> {
             book.setTitle(book.getTitle().toUpperCase());
             return book;
@@ -95,17 +95,8 @@ public class BatchConfig {
     }
 
     @Bean
-    public ItemWriter<Book> writer(DataSource dataSource) {
-        JdbcBatchItemWriter<Book> bookWriter = new JdbcBatchItemWriterBuilder<Book>()
-                .dataSource(dataSource)
-                .sql("INSERT INTO book (id, title, issued, languages, subjects) VALUES (:id, :title, :issued, :languages, :subjects) ON CONFLICT (id) DO NOTHING")
-                .beanMapped()
-                .assertUpdates(false)
-                .build();
-        bookWriter.afterPropertiesSet();
-
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
-        return new CatalogBookWriter(bookWriter, jdbcTemplate);
+    public ItemWriter<GutenbergBook> writer(DataSource dataSource) {
+        return CatalogBookWriter.create(dataSource);
     }
 
 }

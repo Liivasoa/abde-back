@@ -1,11 +1,11 @@
-package mg.msys.abde_back.batch;
+package mg.msys.abde_back.batch.entity;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class Book {
+public class GutenbergBook {
     private Long id;
     private String issued;
     private String title;
