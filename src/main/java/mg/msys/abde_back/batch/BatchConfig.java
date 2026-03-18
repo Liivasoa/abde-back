@@ -21,7 +21,9 @@ import org.springframework.batch.core.configuration.annotation.EnableBatchProces
 import org.springframework.batch.core.configuration.annotation.EnableJdbcJobRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -73,12 +75,13 @@ public class BatchConfig {
         mapper.setTargetType(Book.class);
         return new FlatFileItemReaderBuilder<Book>()
                 .name("bookReader")
+                // .resource(new ClassPathResource("pg_catalog.csv"))
                 .resource(new FileSystemResource(catalogDownloadPath))
                 .linesToSkip(1)
                 .recordSeparatorPolicy(new DefaultRecordSeparatorPolicy())
                 .delimited()
-                .includedFields(0, 2, 3, 4, 6)
-                .names("id", "issued", "title", "languages", "subjects")
+                .includedFields(0, 2, 3, 4, 5, 6)
+                .names("id", "issued", "title", "languages", "authors", "subjects")
                 .fieldSetMapper(mapper)
                 .build();
     }
@@ -92,13 +95,17 @@ public class BatchConfig {
     }
 
     @Bean
-    public JdbcBatchItemWriter<Book> writer(DataSource dataSource) {
-        return new JdbcBatchItemWriterBuilder<Book>()
+    public ItemWriter<Book> writer(DataSource dataSource) {
+        JdbcBatchItemWriter<Book> bookWriter = new JdbcBatchItemWriterBuilder<Book>()
                 .dataSource(dataSource)
                 .sql("INSERT INTO book (id, title, issued, languages, subjects) VALUES (:id, :title, :issued, :languages, :subjects) ON CONFLICT (id) DO NOTHING")
                 .beanMapped()
                 .assertUpdates(false)
                 .build();
+        bookWriter.afterPropertiesSet();
+
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        return new CatalogBookWriter(bookWriter, jdbcTemplate);
     }
 
 }
