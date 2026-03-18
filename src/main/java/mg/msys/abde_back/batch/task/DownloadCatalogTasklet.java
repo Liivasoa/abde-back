@@ -1,4 +1,4 @@
-package mg.msys.abde_back.batch;
+package mg.msys.abde_back.batch.task;
 
 import java.io.InputStream;
 import java.net.URI;

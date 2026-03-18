@@ -1,4 +1,4 @@
-package mg.msys.abde_back.batch;
+package mg.msys.abde_back.batch.task;
 
 import java.text.Normalizer;
 import java.util.ArrayList;
@@ -11,12 +11,17 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import javax.sql.DataSource;
+
 import org.springframework.batch.infrastructure.item.Chunk;
 import org.springframework.batch.infrastructure.item.ItemWriter;
 import org.springframework.batch.infrastructure.item.database.JdbcBatchItemWriter;
+import org.springframework.batch.infrastructure.item.database.builder.JdbcBatchItemWriterBuilder;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-public final class CatalogBookWriter implements ItemWriter<Book> {
+import mg.msys.abde_back.batch.entity.GutenbergBook;
+
+public final class CatalogBookWriter implements ItemWriter<GutenbergBook> {
     private static final String UPSERT_AUTHOR_SQL = """
             INSERT INTO author (last_name, first_names, birth_year, death_year, normalized_key)
             VALUES (?, ?, ?, ?, ?)
@@ -31,16 +36,29 @@ public final class CatalogBookWriter implements ItemWriter<Book> {
             ON CONFLICT DO NOTHING
             """;
 
-    private final JdbcBatchItemWriter<Book> bookWriter;
+    private final JdbcBatchItemWriter<GutenbergBook> bookWriter;
     private final JdbcTemplate jdbcTemplate;
 
-    public CatalogBookWriter(JdbcBatchItemWriter<Book> bookWriter, JdbcTemplate jdbcTemplate) {
+    public CatalogBookWriter(JdbcBatchItemWriter<GutenbergBook> bookWriter, JdbcTemplate jdbcTemplate) {
         this.bookWriter = bookWriter;
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    public static CatalogBookWriter create(DataSource dataSource) {
+        JdbcBatchItemWriter<GutenbergBook> bookWriter = new JdbcBatchItemWriterBuilder<GutenbergBook>()
+                .dataSource(dataSource)
+                .sql("INSERT INTO book (id, title, issued, languages, subjects) VALUES (:id, :title, :issued, :languages, :subjects) ON CONFLICT (id) DO NOTHING")
+                .beanMapped()
+                .assertUpdates(false)
+                .build();
+        bookWriter.afterPropertiesSet();
+
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        return new CatalogBookWriter(bookWriter, jdbcTemplate);
+    }
+
     @Override
-    public void write(Chunk<? extends Book> chunk) throws Exception {
+    public void write(Chunk<? extends GutenbergBook> chunk) throws Exception {
         bookWriter.write(chunk);
 
         AuthorAggregation aggregation = collectAuthorsAndLinks(chunk);
@@ -48,11 +66,11 @@ public final class CatalogBookWriter implements ItemWriter<Book> {
         insertBookAuthorLinks(aggregation.links(), authorIdByKey);
     }
 
-    private AuthorAggregation collectAuthorsAndLinks(Chunk<? extends Book> chunk) {
+    private AuthorAggregation collectAuthorsAndLinks(Chunk<? extends GutenbergBook> chunk) {
         Map<String, AuthorRecord> uniqueAuthors = new LinkedHashMap<>();
         Set<BookAuthorLink> links = new LinkedHashSet<>();
 
-        for (Book book : chunk.getItems()) {
+        for (GutenbergBook book : chunk.getItems()) {
             for (AuthorRecord authorRecord : parseAuthors(book.getAuthors())) {
                 uniqueAuthors.putIfAbsent(authorRecord.normalizedKey(), authorRecord);
                 links.add(new BookAuthorLink(book.getId(), authorRecord.normalizedKey()));
