@@ -8,7 +8,6 @@ import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.Step;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.infrastructure.item.ItemProcessor;
 import org.springframework.batch.infrastructure.item.ItemReader;
 import org.springframework.batch.infrastructure.item.ItemWriter;
 import org.springframework.batch.infrastructure.item.file.FlatFileItemReader;
@@ -25,6 +24,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import mg.msys.abde_back.batch.entity.GutenbergBook;
 import mg.msys.abde_back.batch.task.CatalogBookWriter;
+import mg.msys.abde_back.batch.task.DeleteCatalogFileTasklet;
 import mg.msys.abde_back.batch.task.DownloadCatalogTasklet;
 
 @Configuration
@@ -37,10 +37,14 @@ public class BatchConfig {
     private String catalogDownloadPath;
 
     @Bean
-    public Job importBookJob(JobRepository jobRepository, Step downloadCatalogStep, Step ingestionCatalogStep) {
+    public Job importBookJob(JobRepository jobRepository,
+            Step downloadCatalogStep,
+            Step ingestionCatalogStep,
+            Step cleanupCatalogFileStep) {
         return new JobBuilder("importBookJob", jobRepository)
                 .start(downloadCatalogStep)
                 .next(ingestionCatalogStep)
+                .next(cleanupCatalogFileStep)
                 .build();
     }
 
@@ -58,14 +62,22 @@ public class BatchConfig {
     public Step ingestionCatalogStep(JobRepository jobRepository,
             PlatformTransactionManager transactionManager,
             ItemReader<GutenbergBook> reader,
-            ItemProcessor<GutenbergBook, GutenbergBook> processor,
             ItemWriter<GutenbergBook> writer) {
 
         return new StepBuilder("ingestionCatalogStep", jobRepository)
                 .<GutenbergBook, GutenbergBook>chunk(100).transactionManager(transactionManager)
                 .reader(reader)
-                .processor(processor)
                 .writer(writer)
+                .build();
+    }
+
+    @Bean
+    public Step cleanupCatalogFileStep(JobRepository jobRepository,
+            PlatformTransactionManager transactionManager,
+            DeleteCatalogFileTasklet deleteCatalogFileTasklet) {
+        return new StepBuilder("cleanupCatalogFileStep", jobRepository)
+                .tasklet(deleteCatalogFileTasklet)
+                .transactionManager(transactionManager)
                 .build();
     }
 
@@ -84,14 +96,6 @@ public class BatchConfig {
                 .names("id", "issued", "title", "languages", "authors", "subjects")
                 .fieldSetMapper(mapper)
                 .build();
-    }
-
-    @Bean
-    public ItemProcessor<GutenbergBook, GutenbergBook> processor() {
-        return book -> {
-            book.setTitle(book.getTitle().toUpperCase());
-            return book;
-        };
     }
 
     @Bean
