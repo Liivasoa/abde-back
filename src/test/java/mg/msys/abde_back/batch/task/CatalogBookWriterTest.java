@@ -12,6 +12,7 @@ import org.springframework.batch.infrastructure.item.Chunk;
 import org.springframework.batch.infrastructure.item.database.JdbcBatchItemWriter;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import mg.msys.abde_back.batch.entity.BookAuthorLink;
 import mg.msys.abde_back.batch.entity.GutenbergBook;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,9 +38,9 @@ class CatalogBookWriterTest {
 
         CatalogBookWriter writer = new CatalogBookWriter(bookWriter, jdbcTemplate);
 
-        Set<Object> links = new LinkedHashSet<>();
-        links.add(newBookAuthorLink(1L, "author-key-1"));
-        links.add(newBookAuthorLink(2L, "author-key-2"));
+        Set<BookAuthorLink> links = new LinkedHashSet<>();
+        links.add(new BookAuthorLink(1L, "author-key-1"));
+        links.add(new BookAuthorLink(2L, "author-key-2"));
 
         Map<String, Long> authorIdByKey = Map.of("author-key-1", 10L);
 
@@ -64,7 +65,7 @@ class CatalogBookWriterTest {
 
         CatalogBookWriter writer = new CatalogBookWriter(bookWriter, jdbcTemplate);
 
-        Set<Object> links = Set.of(newBookAuthorLink(1L, "missing-author"));
+        Set<BookAuthorLink> links = Set.of(new BookAuthorLink(1L, "missing-author"));
 
         insertBookAuthorLinks(writer, links, Map.of());
 
@@ -198,14 +199,8 @@ class CatalogBookWriterTest {
         return (Object[]) parseAuthorsMethod.invoke(null, csvAuthors);
     }
 
-    private static Object newBookAuthorLink(Long bookId, String authorKey) throws Exception {
-        Class<?> linkClass = Class.forName("mg.msys.abde_back.batch.task.CatalogBookWriter$BookAuthorLink");
-        var ctor = linkClass.getDeclaredConstructor(Long.class, String.class);
-        ctor.setAccessible(true);
-        return ctor.newInstance(bookId, authorKey);
-    }
-
-    private static void insertBookAuthorLinks(CatalogBookWriter writer, Set<?> links, Map<String, Long> authorIdByKey)
+    private static void insertBookAuthorLinks(CatalogBookWriter writer, Set<BookAuthorLink> links,
+            Map<String, Long> authorIdByKey)
             throws Exception {
         Method method = CatalogBookWriter.class.getDeclaredMethod("insertBookAuthorLinks", Set.class, Map.class);
         method.setAccessible(true);

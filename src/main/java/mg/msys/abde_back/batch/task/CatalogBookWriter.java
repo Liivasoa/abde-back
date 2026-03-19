@@ -19,6 +19,9 @@ import org.springframework.batch.infrastructure.item.database.JdbcBatchItemWrite
 import org.springframework.batch.infrastructure.item.database.builder.JdbcBatchItemWriterBuilder;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import mg.msys.abde_back.batch.entity.Author;
+import mg.msys.abde_back.batch.entity.AuthorAggregation;
+import mg.msys.abde_back.batch.entity.BookAuthorLink;
 import mg.msys.abde_back.batch.entity.GutenbergBook;
 
 public final class CatalogBookWriter implements ItemWriter<GutenbergBook> {
@@ -67,11 +70,11 @@ public final class CatalogBookWriter implements ItemWriter<GutenbergBook> {
     }
 
     private AuthorAggregation collectAuthorsAndLinks(Chunk<? extends GutenbergBook> chunk) {
-        Map<String, AuthorRecord> uniqueAuthors = new LinkedHashMap<>();
+        Map<String, Author> uniqueAuthors = new LinkedHashMap<>();
         Set<BookAuthorLink> links = new LinkedHashSet<>();
 
         for (GutenbergBook book : chunk.getItems()) {
-            for (AuthorRecord authorRecord : parseAuthors(book.getAuthors())) {
+            for (Author authorRecord : parseAuthors(book.getAuthors())) {
                 uniqueAuthors.putIfAbsent(authorRecord.normalizedKey(), authorRecord);
                 links.add(new BookAuthorLink(book.getId(), authorRecord.normalizedKey()));
             }
@@ -80,10 +83,10 @@ public final class CatalogBookWriter implements ItemWriter<GutenbergBook> {
         return new AuthorAggregation(uniqueAuthors, links);
     }
 
-    private Map<String, Long> upsertAuthors(Map<String, AuthorRecord> uniqueAuthors) {
+    private Map<String, Long> upsertAuthors(Map<String, Author> uniqueAuthors) {
         Map<String, Long> authorIdByKey = new HashMap<>();
 
-        for (AuthorRecord authorRecord : uniqueAuthors.values()) {
+        for (Author authorRecord : uniqueAuthors.values()) {
             Long authorId = jdbcTemplate.queryForObject(
                     UPSERT_AUTHOR_SQL,
                     Long.class,
@@ -115,19 +118,19 @@ public final class CatalogBookWriter implements ItemWriter<GutenbergBook> {
         }
     }
 
-    private static AuthorRecord[] parseAuthors(String csvAuthors) {
+    private static Author[] parseAuthors(String csvAuthors) {
         if (csvAuthors == null || csvAuthors.isBlank()) {
-            return new AuthorRecord[0];
+            return new Author[0];
         }
 
         return Arrays.stream(csvAuthors.split(";"))
                 .map(String::trim)
                 .filter(value -> !value.isBlank())
                 .map(CatalogBookWriter::parseSingleAuthor)
-                .toArray(AuthorRecord[]::new);
+                .toArray(Author[]::new);
     }
 
-    private static AuthorRecord parseSingleAuthor(String rawAuthor) {
+    private static Author parseSingleAuthor(String rawAuthor) {
         String value = rawAuthor.trim();
         String birthYear = null;
         String deathYear = null;
@@ -158,7 +161,7 @@ public final class CatalogBookWriter implements ItemWriter<GutenbergBook> {
         String normalizedKey = normalize(lastName) + "|" + normalize(firstNames) + "|" + normalize(birthYear) + "|"
                 + normalize(deathYear);
 
-        return new AuthorRecord(lastName, firstNames, birthYear, deathYear, normalizedKey);
+        return new Author(lastName, firstNames, birthYear, deathYear, normalizedKey);
     }
 
     private static String normalize(String value) {
@@ -173,13 +176,4 @@ public final class CatalogBookWriter implements ItemWriter<GutenbergBook> {
                 .replaceAll("\\s+", " ");
     }
 
-    private record AuthorRecord(String lastName, String firstNames, String birthYear, String deathYear,
-            String normalizedKey) {
-    }
-
-    private record BookAuthorLink(Long bookId, String authorKey) {
-    }
-
-    private record AuthorAggregation(Map<String, AuthorRecord> uniqueAuthors, Set<BookAuthorLink> links) {
-    }
 }
