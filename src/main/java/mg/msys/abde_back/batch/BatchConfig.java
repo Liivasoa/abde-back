@@ -1,5 +1,8 @@
 package mg.msys.abde_back.batch;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -12,7 +15,6 @@ import org.springframework.batch.infrastructure.item.ItemReader;
 import org.springframework.batch.infrastructure.item.ItemWriter;
 import org.springframework.batch.infrastructure.item.file.FlatFileItemReader;
 import org.springframework.batch.infrastructure.item.file.builder.FlatFileItemReaderBuilder;
-import org.springframework.batch.infrastructure.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.infrastructure.item.file.separator.DefaultRecordSeparatorPolicy;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.EnableJdbcJobRepository;
@@ -83,8 +85,6 @@ public class BatchConfig {
 
     @Bean
     public FlatFileItemReader<GutenbergBook> reader() {
-        BeanWrapperFieldSetMapper<GutenbergBook> mapper = new BeanWrapperFieldSetMapper<>();
-        mapper.setTargetType(GutenbergBook.class);
         return new FlatFileItemReaderBuilder<GutenbergBook>()
                 .name("bookReader")
                 // .resource(new ClassPathResource("pg_catalog.csv"))
@@ -94,8 +94,34 @@ public class BatchConfig {
                 .delimited()
                 .includedFields(0, 2, 3, 4, 5, 6)
                 .names("id", "issued", "title", "languages", "authors", "subjects")
-                .fieldSetMapper(mapper)
+                .fieldSetMapper(fieldSet -> {
+                    GutenbergBook book = new GutenbergBook();
+                    book.setId(fieldSet.readLong("id"));
+                    book.setIssued(parseIssued(fieldSet.readString("issued")));
+                    book.setTitle(fieldSet.readString("title"));
+                    book.setLanguages(fieldSet.readString("languages"));
+                    book.setAuthors(fieldSet.readString("authors"));
+                    book.setSubjects(fieldSet.readString("subjects"));
+                    return book;
+                })
                 .build();
+    }
+
+    private static LocalDate parseIssued(String issuedValue) {
+        if (issuedValue == null || issuedValue.isBlank()) {
+            return null;
+        }
+
+        String normalizedValue = issuedValue.trim();
+        if (normalizedValue.matches("\\d{4}")) {
+            return LocalDate.of(Integer.parseInt(normalizedValue), 1, 1);
+        }
+
+        try {
+            return LocalDate.parse(normalizedValue);
+        } catch (DateTimeParseException ignored) {
+            return null;
+        }
     }
 
     @Bean

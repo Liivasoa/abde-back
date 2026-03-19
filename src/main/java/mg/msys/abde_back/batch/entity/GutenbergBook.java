@@ -1,5 +1,7 @@
 package mg.msys.abde_back.batch.entity;
 
+import java.time.LocalDate;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,7 +9,7 @@ import lombok.Setter;
 @Setter
 public class GutenbergBook {
     private Long id;
-    private String issued;
+    private LocalDate issued;
     private String title;
     private String languages;
     private String authors;

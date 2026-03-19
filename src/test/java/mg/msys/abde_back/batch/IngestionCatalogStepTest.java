@@ -1,5 +1,7 @@
 package mg.msys.abde_back.batch;
 
+import java.lang.reflect.Method;
+import java.time.LocalDate;
 import java.nio.file.Path;
 
 import org.junit.jupiter.api.Test;
@@ -15,6 +17,7 @@ import mg.msys.abde_back.batch.entity.GutenbergBook;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 
 class IngestionCatalogStepTest {
@@ -52,5 +55,37 @@ class IngestionCatalogStepTest {
         assertNotNull(resourceField);
         assertEquals(configuredPath,
                 ((Resource) resourceField).getDescription().replace("file [", "").replace("]", ""));
+    }
+
+    @Test
+    void shouldParseIssuedYearAsFirstDayOfYear() throws Exception {
+        LocalDate issued = parseIssued("2020");
+
+        assertEquals(LocalDate.of(2020, 1, 1), issued);
+    }
+
+    @Test
+    void shouldParseIssuedIsoDate() throws Exception {
+        LocalDate issued = parseIssued("2020-05-10");
+
+        assertEquals(LocalDate.of(2020, 5, 10), issued);
+    }
+
+    @Test
+    void shouldReturnNullWhenIssuedIsNullOrBlank() throws Exception {
+        assertNull(parseIssued(null));
+        assertNull(parseIssued("   "));
+    }
+
+    @Test
+    void shouldReturnNullWhenIssuedFormatIsInvalid() throws Exception {
+        assertNull(parseIssued("unknown"));
+        assertNull(parseIssued("2020/12/31"));
+    }
+
+    private static LocalDate parseIssued(String issuedValue) throws Exception {
+        Method parseIssuedMethod = BatchConfig.class.getDeclaredMethod("parseIssued", String.class);
+        parseIssuedMethod.setAccessible(true);
+        return (LocalDate) parseIssuedMethod.invoke(null, issuedValue);
     }
 }
