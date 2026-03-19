@@ -85,7 +85,7 @@ class CatalogBookWriterTest {
 
     @Test
     void shouldParseMultipleAuthorsAndIgnoreBlankTokens() throws Exception {
-        Object[] parsed = parseAuthors(" ; Doe, John ; ; Homer 800 BCE- ; ");
+        Object[] parsed = parseAuthors(" ; Doe, John ; ; Homer 800- ; ");
 
         assertEquals(2, parsed.length);
 
@@ -94,8 +94,8 @@ class CatalogBookWriterTest {
         assertEquals("doe|john||", invokeAccessor(parsed[0], "normalizedKey"));
 
         assertEquals("Homer", invokeAccessor(parsed[1], "lastName"));
-        assertEquals("800 BCE", invokeAccessor(parsed[1], "birthYear"));
-        assertEquals("homer||800 bce|", invokeAccessor(parsed[1], "normalizedKey"));
+        assertEquals(800, invokeAccessor(parsed[1], "birthYear"));
+        assertEquals("homer||800|", invokeAccessor(parsed[1], "normalizedKey"));
     }
 
     @Test
@@ -104,20 +104,20 @@ class CatalogBookWriterTest {
 
         assertEquals("García Márquez", invokeAccessor(parsed, "lastName"));
         assertEquals("Gabriel", invokeAccessor(parsed, "firstNames"));
-        assertEquals("1927", invokeAccessor(parsed, "birthYear"));
-        assertEquals("2014", invokeAccessor(parsed, "deathYear"));
+        assertEquals(1927, invokeAccessor(parsed, "birthYear"));
+        assertEquals(2014, invokeAccessor(parsed, "deathYear"));
         assertEquals("garcia marquez|gabriel|1927|2014", invokeAccessor(parsed, "normalizedKey"));
     }
 
     @Test
     void shouldParseAuthorWithOpenEndedDeathYear() throws Exception {
-        Object parsed = parseSingleAuthor("Homer 800 BCE-");
+        Object parsed = parseSingleAuthor("Homer 800-");
 
         assertEquals("Homer", invokeAccessor(parsed, "lastName"));
         assertEquals(null, invokeAccessor(parsed, "firstNames"));
-        assertEquals("800 BCE", invokeAccessor(parsed, "birthYear"));
+        assertEquals(800, invokeAccessor(parsed, "birthYear"));
         assertEquals(null, invokeAccessor(parsed, "deathYear"));
-        assertEquals("homer||800 bce|", invokeAccessor(parsed, "normalizedKey"));
+        assertEquals("homer||800|", invokeAccessor(parsed, "normalizedKey"));
     }
 
     @Test

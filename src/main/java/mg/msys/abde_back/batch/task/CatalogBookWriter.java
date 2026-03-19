@@ -132,19 +132,19 @@ public final class CatalogBookWriter implements ItemWriter<GutenbergBook> {
 
     private static Author parseSingleAuthor(String rawAuthor) {
         String value = rawAuthor.trim();
-        String birthYear = null;
-        String deathYear = null;
+        Integer birthYear = null;
+        Integer deathYear = null;
 
         java.util.regex.Matcher yearsMatcher = java.util.regex.Pattern
-                .compile("^(.*?)(?:,\\s*)?([0-9]{3,4}\\??(?:\\s*BCE)?)\\s*-\\s*([0-9]{0,4}\\??(?:\\s*BCE)?)\\s*$",
+                .compile("^(.*?)(?:,\\s*)?([0-9]{1,4})\\s*-\\s*([0-9]{0,4})\\s*$",
                         java.util.regex.Pattern.CASE_INSENSITIVE)
                 .matcher(value);
 
         if (yearsMatcher.matches()) {
             value = yearsMatcher.group(1).trim();
-            birthYear = yearsMatcher.group(2).trim();
+            birthYear = parseYear(yearsMatcher.group(2).trim());
             String parsedDeathYear = yearsMatcher.group(3).trim();
-            deathYear = parsedDeathYear.isBlank() ? null : parsedDeathYear;
+            deathYear = parsedDeathYear.isBlank() ? null : parseYear(parsedDeathYear);
         }
 
         String lastName = value;
@@ -158,8 +158,8 @@ public final class CatalogBookWriter implements ItemWriter<GutenbergBook> {
             }
         }
 
-        String normalizedKey = normalize(lastName) + "|" + normalize(firstNames) + "|" + normalize(birthYear) + "|"
-                + normalize(deathYear);
+        String normalizedKey = normalize(lastName) + "|" + normalize(firstNames) + "|" + normalizeYear(birthYear) + "|"
+                + normalizeYear(deathYear);
 
         return new Author(lastName, firstNames, birthYear, deathYear, normalizedKey);
     }
@@ -174,6 +174,21 @@ public final class CatalogBookWriter implements ItemWriter<GutenbergBook> {
                 .trim()
                 .toLowerCase(Locale.ROOT)
                 .replaceAll("\\s+", " ");
+    }
+
+    private static Integer parseYear(String raw) {
+        if (raw == null || raw.isBlank()) {
+            return null;
+        }
+        String s = raw.trim();
+        if (!s.matches("[0-9]{1,4}")) {
+            return null;
+        }
+        return Integer.parseInt(s);
+    }
+
+    private static String normalizeYear(Integer year) {
+        return year != null ? String.valueOf(year) : "";
     }
 
 }
