@@ -10,6 +10,7 @@
   - test strategy
   - migration or persistence work
   - multi-file analysis
+- Always mention what agent you are delegating to when you do so, and provide a brief rationale for the delegation.
 
 ## Allowed Direct Handling (No Delegation)
 
