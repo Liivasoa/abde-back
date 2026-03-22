@@ -406,6 +406,19 @@ class HexagonalArchitectureTest {
                 }
 
                 @Test
+                @DisplayName("Output adapters should delegate SQL/JDBC concerns to infrastructure repositories")
+                void outputAdaptersShouldNotDependOnJdbcAndSqlApis() {
+                        noClasses()
+                                        .that().resideInAPackage(ADAPTER_OUT_PACKAGE)
+                                        .should().dependOnClassesThat().resideInAnyPackage(
+                                                        "org.springframework.jdbc..",
+                                                        "java.sql..")
+                                        .as("Output adapters must delegate direct SQL/JDBC communication to " +
+                                                        "infrastructure repositories")
+                                        .check(importedClasses);
+                }
+
+                @Test
                 @DisplayName("Output adapter mappers should be named with 'Mapper' or 'MapperImpl' suffix")
                 void mappersShouldBeNamedCorrectly() {
                         classes()
