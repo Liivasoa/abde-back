@@ -1,5 +1,6 @@
 package mg.msys.abde_back.adapter.out;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -16,8 +17,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import mg.msys.abde_back.application.port.BookSearchPersistencePort;
+import mg.msys.abde_back.domain.model.AuthorReference;
 import mg.msys.abde_back.domain.model.Book;
 import mg.msys.abde_back.domain.model.BookSearchCriteria;
+import mg.msys.abde_back.domain.model.BookSearchResult;
 import mg.msys.abde_back.domain.model.PaginatedResult;
 import mg.msys.abde_back.infrastructure.repository.BookSearchJpaRepository;
 
@@ -60,49 +63,77 @@ class BookSearchPersistenceAdapterTest extends AbstractAdapterTest {
     }
 
     @Test
-    @DisplayName("Should return paginated books when no filter is provided")
+    @DisplayName("Should return paginated book results when no filter is provided")
     void testSearchWithoutFilters() {
-        PaginatedResult<Book> result = bookSearchPersistencePort
-                .searchPage(new BookSearchCriteria(null, null, null, null, 0, 2));
+        PaginatedResult<BookSearchResult> result = bookSearchPersistencePort
+                .searchResultsPage(new BookSearchCriteria(null, null, null, null, 0, 2));
 
         assertEquals(2, result.items().size());
         assertEquals(3, result.totalElements());
         assertEquals(2, result.totalPages());
+        assertThat(result.items()).allMatch(item -> item.authors() != null);
     }
 
     @Test
-    @DisplayName("Should filter by publication year with pagination")
+    @DisplayName("Should filter by publication year with pagination and return BookSearchResult")
     void testSearchByPublicationYear() {
-        PaginatedResult<Book> result = bookSearchPersistencePort
-                .searchPage(new BookSearchCriteria(1949, null, null, null, 0, 10));
+        PaginatedResult<BookSearchResult> result = bookSearchPersistencePort
+                .searchResultsPage(new BookSearchCriteria(1949, null, null, null, 0, 10));
 
         assertEquals(1, result.items().size());
-        assertEquals("Nineteen Eighty-Four", result.items().get(0).title());
+        BookSearchResult firstResult = result.items().get(0);
+        assertEquals("Nineteen Eighty-Four", firstResult.title());
+        assertThat(firstResult.authors())
+                .hasSizeGreaterThan(0)
+                .allMatch(author -> author.id() != null && !author.fullName().isEmpty());
     }
 
     @Test
-    @DisplayName("Should filter by author name with pagination")
+    @DisplayName("Should filter by author name with pagination and return BookSearchResult with AuthorReference")
     void testSearchByAuthorName() {
-        PaginatedResult<Book> result = bookSearchPersistencePort
-                .searchPage(new BookSearchCriteria(null, "melville", null, null, 0, 10));
+        PaginatedResult<BookSearchResult> result = bookSearchPersistencePort
+                .searchResultsPage(new BookSearchCriteria(null, "melville", null, null, 0, 10));
 
         assertEquals(1, result.items().size());
-        assertEquals("Moby Dick", result.items().get(0).title());
-        assertTrue(result.items().get(0).authors().contains("Herman Melville"));
+        BookSearchResult firstResult = result.items().get(0);
+        assertEquals("Moby Dick", firstResult.title());
+        assertThat(firstResult.authors())
+                .hasSizeGreaterThan(0)
+                .anyMatch(author -> author.fullName().contains("Melville"));
     }
 
     @Test
-    @DisplayName("Should combine filters with AND semantics")
+    @DisplayName("Should combine filters with AND semantics and return BookSearchResult")
     void testSearchByCombinedFilters() {
-        PaginatedResult<Book> result = bookSearchPersistencePort
-                .searchPage(new BookSearchCriteria(1851, null, "EN", "Moby", 0, 10));
+        PaginatedResult<BookSearchResult> result = bookSearchPersistencePort
+                .searchResultsPage(new BookSearchCriteria(1851, null, "EN", "Moby", 0, 10));
 
         assertEquals(1, result.items().size());
-        assertEquals("Moby Dick", result.items().get(0).title());
+        BookSearchResult firstResult = result.items().get(0);
+        assertEquals("Moby Dick", firstResult.title());
+        assertEquals(10L, firstResult.authors().get(0).id());
 
-        PaginatedResult<Book> emptyResult = bookSearchPersistencePort
-                .searchPage(new BookSearchCriteria(1851, null, "FR", "Moby", 0, 10));
+        PaginatedResult<BookSearchResult> emptyResult = bookSearchPersistencePort
+                .searchResultsPage(new BookSearchCriteria(1851, null, "FR", "Moby", 0, 10));
         assertTrue(emptyResult.items().isEmpty());
+    }
+
+    @Test
+    @DisplayName("Should return BookSearchResult with author references containing id and fullName")
+    void testSearchResultContainsAuthorReferences() {
+        PaginatedResult<BookSearchResult> result = bookSearchPersistencePort
+                .searchResultsPage(new BookSearchCriteria(null, null, null, null, 0, 10));
+
+        assertThat(result.items()).isNotEmpty();
+        BookSearchResult firstResult = result.items().get(0);
+        
+        assertThat(firstResult.authors()).allMatch(
+            author -> author.id() != null,
+            "All AuthorReference must have non-null id"
+        ).allMatch(
+            author -> author.fullName() != null && !author.fullName().isEmpty(),
+            "All AuthorReference must have non-empty fullName"
+        );
     }
 
     @Test
