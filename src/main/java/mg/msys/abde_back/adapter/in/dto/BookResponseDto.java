@@ -4,9 +4,9 @@ import java.time.LocalDate;
 import java.util.List;
 
 public record BookResponseDto(
-        Long id,
-        String title,
-        LocalDate issued,
-        String language,
-        List<String> authors) {
+                Long id,
+                String title,
+                LocalDate issued,
+                String language,
+                List<AuthorResponseDto> authors) {
 }

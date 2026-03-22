@@ -13,11 +13,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import mg.msys.abde_back.adapter.in.dto.AuthorResponseDto;
 import mg.msys.abde_back.adapter.in.dto.BookResponseDto;
 import mg.msys.abde_back.adapter.in.dto.ErrorResponse;
 import mg.msys.abde_back.adapter.in.dto.PaginatedBookResponseDto;
 import mg.msys.abde_back.application.usecase.book.SearchBooksUseCase;
-import mg.msys.abde_back.domain.model.Book;
+import mg.msys.abde_back.domain.model.BookSearchResult;
 import mg.msys.abde_back.domain.model.PaginatedResult;
 
 @RestController
@@ -26,51 +27,55 @@ import mg.msys.abde_back.domain.model.PaginatedResult;
 @Tag(name = "Book", description = "Search books using optional filters")
 public class BookController {
 
-    private final SearchBooksUseCase searchBooksUseCase;
+        private final SearchBooksUseCase searchBooksUseCase;
 
-    @GetMapping("/search")
-    @Operation(summary = "Search books", description = "Search books by optional publication year, author name, language, and title")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Search executed successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PaginatedBookResponseDto.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid request data", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
-            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
-    })
-    public ResponseEntity<PaginatedBookResponseDto> search(
-            @RequestParam(required = false) Integer publicationYear,
-            @RequestParam(required = false) String authorName,
-            @RequestParam(required = false) String language,
-            @RequestParam(required = false) String title,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size) {
+        @GetMapping("/search")
+        @Operation(summary = "Search books", description = "Search books by optional publication year, author name, language, and title")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "Search executed successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PaginatedBookResponseDto.class))),
+                        @ApiResponse(responseCode = "400", description = "Invalid request data", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+                        @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+        })
+        public ResponseEntity<PaginatedBookResponseDto> search(
+                        @RequestParam(required = false) Integer publicationYear,
+                        @RequestParam(required = false) String authorName,
+                        @RequestParam(required = false) String language,
+                        @RequestParam(required = false) String title,
+                        @RequestParam(defaultValue = "0") int page,
+                        @RequestParam(defaultValue = "20") int size) {
 
-        PaginatedResult<Book> result = searchBooksUseCase.execute(
-                publicationYear,
-                authorName,
-                language,
-                title,
-                page,
-                size);
+                PaginatedResult<BookSearchResult> result = searchBooksUseCase.execute(
+                                publicationYear,
+                                authorName,
+                                language,
+                                title,
+                                page,
+                                size);
 
-        PaginatedBookResponseDto response = new PaginatedBookResponseDto(
-                result.items().stream()
-                        .map(this::toDto)
-                        .toList(),
-                result.page(),
-                result.size(),
-                result.totalElements(),
-                result.totalPages(),
-                result.hasNext(),
-                result.hasPrevious());
+                PaginatedBookResponseDto response = new PaginatedBookResponseDto(
+                                result.items().stream()
+                                                .map(this::toDto)
+                                                .toList(),
+                                result.page(),
+                                result.size(),
+                                result.totalElements(),
+                                result.totalPages(),
+                                result.hasNext(),
+                                result.hasPrevious());
 
-        return ResponseEntity.ok(response);
-    }
+                return ResponseEntity.ok(response);
+        }
 
-    private BookResponseDto toDto(Book book) {
-        return new BookResponseDto(
-                book.id(),
-                book.title(),
-                book.issued(),
-                book.language(),
-                book.authors());
-    }
+        private BookResponseDto toDto(BookSearchResult book) {
+                return new BookResponseDto(
+                                book.id(),
+                                book.title(),
+                                book.issued(),
+                                book.language(),
+                                book.authors().stream().map(this::toAuthorDto).toList());
+        }
+
+        private AuthorResponseDto toAuthorDto(BookSearchResult.AuthorReference author) {
+                return new AuthorResponseDto(author.id(), author.fullName());
+        }
 }
