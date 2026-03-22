@@ -34,6 +34,10 @@ You are the migration specialist for this repository.
 - Keep SQL and comments in English.
 - Do not overuse comments in migration scripts; rely on descriptive filenames and readable SQL.
 - Keep data access concerns in `mg.msys.abde_back.infrastructure.repository.*` only.
+- Respect strict TDD stop points for migration-related increments:
+  - Red stop: failing migration/persistence tests first, then request user review/commit.
+  - Green stop: minimal migration/repository change to pass tests, then request user review/commit.
+  - Refactor stop: cleanup-only changes with green tests, then request user review/commit.
 
 ## Definition of Done
 
