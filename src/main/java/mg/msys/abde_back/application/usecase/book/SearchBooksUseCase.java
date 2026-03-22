@@ -2,13 +2,14 @@ package mg.msys.abde_back.application.usecase.book;
 
 import java.util.List;
 
-import mg.msys.abde_back.domain.model.Book;
 import mg.msys.abde_back.domain.model.PaginatedResult;
+import mg.msys.abde_back.domain.model.BookSearchResult;
 
 public interface SearchBooksUseCase {
 
-    List<Book> execute(Integer publicationYear, String authorName, String language, String title);
+    List<BookSearchResult> execute(Integer publicationYear, String authorName, String language, String title);
 
-    PaginatedResult<Book> execute(Integer publicationYear, String authorName, String language, String title, int page,
+    PaginatedResult<BookSearchResult> execute(Integer publicationYear, String authorName, String language, String title,
+            int page,
             int size);
 }

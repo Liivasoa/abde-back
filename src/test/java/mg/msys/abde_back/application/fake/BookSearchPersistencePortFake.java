@@ -4,26 +4,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 import mg.msys.abde_back.application.port.BookSearchPersistencePort;
-import mg.msys.abde_back.domain.model.Book;
 import mg.msys.abde_back.domain.model.BookSearchCriteria;
+import mg.msys.abde_back.domain.model.BookSearchResult;
 import mg.msys.abde_back.domain.model.PaginatedResult;
 
 public class BookSearchPersistencePortFake implements BookSearchPersistencePort {
 
-    private final List<Book> booksToReturn = new ArrayList<>();
+    private final List<BookSearchResult> booksToReturn = new ArrayList<>();
     private long totalElementsToReturn;
     private BookSearchCriteria lastCriteria;
     private int callCount;
+    private int searchCallCount;
+    private int searchPageCallCount;
 
     @Override
-    public List<Book> search(BookSearchCriteria criteria) {
+    public List<BookSearchResult> search(BookSearchCriteria criteria) {
         registerCall(criteria);
+        this.searchCallCount++;
         return List.copyOf(booksToReturn);
     }
 
     @Override
-    public PaginatedResult<Book> searchPage(BookSearchCriteria criteria) {
+    public PaginatedResult<BookSearchResult> searchPage(BookSearchCriteria criteria) {
         registerCall(criteria);
+        this.searchPageCallCount++;
         return PaginatedResult.of(List.copyOf(booksToReturn), criteria.page(), criteria.size(), totalElementsToReturn);
     }
 
@@ -32,7 +36,7 @@ public class BookSearchPersistencePortFake implements BookSearchPersistencePort 
         this.callCount++;
     }
 
-    public void setBooksToReturn(List<Book> books) {
+    public void setBooksToReturn(List<BookSearchResult> books) {
         this.booksToReturn.clear();
         this.booksToReturn.addAll(books);
     }
@@ -47,5 +51,13 @@ public class BookSearchPersistencePortFake implements BookSearchPersistencePort 
 
     public int getCallCount() {
         return callCount;
+    }
+
+    public int getSearchCallCount() {
+        return searchCallCount;
+    }
+
+    public int getSearchPageCallCount() {
+        return searchPageCallCount;
     }
 }
