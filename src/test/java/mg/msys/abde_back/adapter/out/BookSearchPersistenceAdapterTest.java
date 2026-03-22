@@ -17,8 +17,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import mg.msys.abde_back.application.port.BookSearchPersistencePort;
-import mg.msys.abde_back.domain.model.AuthorReference;
-import mg.msys.abde_back.domain.model.Book;
 import mg.msys.abde_back.domain.model.BookSearchCriteria;
 import mg.msys.abde_back.domain.model.BookSearchResult;
 import mg.msys.abde_back.domain.model.PaginatedResult;
@@ -46,6 +44,10 @@ class BookSearchPersistenceAdapterTest extends AbstractAdapterTest {
                 LocalDate.of(1949, 6, 8), "Nineteen Eighty-Four", "EN", "Dystopia");
         jdbcTemplate.update("INSERT INTO book(id, issued, title, languages, subjects) VALUES (3, ?, ?, ?, ?)",
                 LocalDate.of(1932, 1, 1), "Le Petit Prince", "FR", "Children");
+        jdbcTemplate.update("INSERT INTO book(id, issued, title, languages, subjects) VALUES (4, ?, ?, ?, ?)",
+                LocalDate.of(2025, 1, 1), "No Author Book", "EN", "Test");
+        jdbcTemplate.update("INSERT INTO book(id, issued, title, languages, subjects) VALUES (5, ?, ?, ?, ?)",
+                LocalDate.of(2026, 1, 1), "Nameless Author Book", "EN", "Test");
 
         jdbcTemplate.update(
                 "INSERT INTO author(id, last_name, first_names, birth_year, death_year, normalized_key) VALUES (10, ?, ?, ?, ?, ?)",
@@ -56,21 +58,37 @@ class BookSearchPersistenceAdapterTest extends AbstractAdapterTest {
         jdbcTemplate.update(
                 "INSERT INTO author(id, last_name, first_names, birth_year, death_year, normalized_key) VALUES (12, ?, ?, ?, ?, ?)",
                 "de Saint-Exupery", "Antoine", 1900, 1944, "de_saint_exupery_antoine");
+        jdbcTemplate.update(
+                "INSERT INTO author(id, last_name, first_names, birth_year, death_year, normalized_key) VALUES (13, ?, ?, ?, ?, ?)",
+                "", "", 1900, 1944, "blank_blank");
 
         jdbcTemplate.update("INSERT INTO book_author(book_id, author_id) VALUES (1, 10)");
         jdbcTemplate.update("INSERT INTO book_author(book_id, author_id) VALUES (2, 11)");
         jdbcTemplate.update("INSERT INTO book_author(book_id, author_id) VALUES (3, 12)");
+        jdbcTemplate.update("INSERT INTO book_author(book_id, author_id) VALUES (5, 13)");
+    }
+
+    @Test
+    @DisplayName("Should return non paginated search results")
+    void testSearchWithoutPagination() {
+        List<BookSearchResult> result = bookSearchPersistencePort
+                .search(new BookSearchCriteria(null, null, null, null));
+
+        assertThat(result).hasSize(5);
+        assertThat(result)
+                .allMatch(book -> book.id() != null)
+                .allMatch(book -> book.title() != null && !book.title().isBlank());
     }
 
     @Test
     @DisplayName("Should return paginated book results when no filter is provided")
     void testSearchWithoutFilters() {
         PaginatedResult<BookSearchResult> result = bookSearchPersistencePort
-                .searchResultsPage(new BookSearchCriteria(null, null, null, null, 0, 2));
+                .searchPage(new BookSearchCriteria(null, null, null, null, 0, 2));
 
         assertEquals(2, result.items().size());
-        assertEquals(3, result.totalElements());
-        assertEquals(2, result.totalPages());
+        assertEquals(5, result.totalElements());
+        assertEquals(3, result.totalPages());
         assertThat(result.items()).allMatch(item -> item.authors() != null);
     }
 
@@ -78,7 +96,7 @@ class BookSearchPersistenceAdapterTest extends AbstractAdapterTest {
     @DisplayName("Should filter by publication year with pagination and return BookSearchResult")
     void testSearchByPublicationYear() {
         PaginatedResult<BookSearchResult> result = bookSearchPersistencePort
-                .searchResultsPage(new BookSearchCriteria(1949, null, null, null, 0, 10));
+                .searchPage(new BookSearchCriteria(1949, null, null, null, 0, 10));
 
         assertEquals(1, result.items().size());
         BookSearchResult firstResult = result.items().get(0);
@@ -92,7 +110,7 @@ class BookSearchPersistenceAdapterTest extends AbstractAdapterTest {
     @DisplayName("Should filter by author name with pagination and return BookSearchResult with AuthorReference")
     void testSearchByAuthorName() {
         PaginatedResult<BookSearchResult> result = bookSearchPersistencePort
-                .searchResultsPage(new BookSearchCriteria(null, "melville", null, null, 0, 10));
+                .searchPage(new BookSearchCriteria(null, "melville", null, null, 0, 10));
 
         assertEquals(1, result.items().size());
         BookSearchResult firstResult = result.items().get(0);
@@ -106,7 +124,7 @@ class BookSearchPersistenceAdapterTest extends AbstractAdapterTest {
     @DisplayName("Should combine filters with AND semantics and return BookSearchResult")
     void testSearchByCombinedFilters() {
         PaginatedResult<BookSearchResult> result = bookSearchPersistencePort
-                .searchResultsPage(new BookSearchCriteria(1851, null, "EN", "Moby", 0, 10));
+                .searchPage(new BookSearchCriteria(1851, null, "EN", "Moby", 0, 10));
 
         assertEquals(1, result.items().size());
         BookSearchResult firstResult = result.items().get(0);
@@ -114,7 +132,7 @@ class BookSearchPersistenceAdapterTest extends AbstractAdapterTest {
         assertEquals(10L, firstResult.authors().get(0).id());
 
         PaginatedResult<BookSearchResult> emptyResult = bookSearchPersistencePort
-                .searchResultsPage(new BookSearchCriteria(1851, null, "FR", "Moby", 0, 10));
+                .searchPage(new BookSearchCriteria(1851, null, "FR", "Moby", 0, 10));
         assertTrue(emptyResult.items().isEmpty());
     }
 
@@ -122,7 +140,7 @@ class BookSearchPersistenceAdapterTest extends AbstractAdapterTest {
     @DisplayName("Should return BookSearchResult with author references containing id and fullName")
     void testSearchResultContainsAuthorReferences() {
         PaginatedResult<BookSearchResult> result = bookSearchPersistencePort
-                .searchResultsPage(new BookSearchCriteria(null, null, null, null, 0, 10));
+                .searchPage(new BookSearchCriteria(null, null, null, null, 0, 10));
 
         assertThat(result.items()).isNotEmpty();
         BookSearchResult firstResult = result.items().get(0);
@@ -132,6 +150,31 @@ class BookSearchPersistenceAdapterTest extends AbstractAdapterTest {
                 "All AuthorReference must have non-null id").allMatch(
                         author -> author.fullName() != null && !author.fullName().isEmpty(),
                         "All AuthorReference must have non-empty fullName");
+    }
+
+    @Test
+    @DisplayName("Should return empty author list for books without author relation")
+    void testSearchIncludesBookWithoutAuthors() {
+        List<BookSearchResult> result = bookSearchPersistencePort
+                .search(new BookSearchCriteria(null, null, null, null));
+
+        BookSearchResult noAuthorBook = result.stream()
+                .filter(book -> "No Author Book".equals(book.title()))
+                .findFirst()
+                .orElseThrow();
+
+        assertThat(noAuthorBook.authors()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("Should filter out blank author full name entries")
+    void testSearchFiltersBlankAuthorFullName() {
+        List<BookSearchResult> result = bookSearchPersistencePort
+                .search(new BookSearchCriteria(null, null, null, "Nameless", 0, 10));
+
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).title()).isEqualTo("Nameless Author Book");
+        assertThat(result.get(0).authors()).isEmpty();
     }
 
     @Test

@@ -1,0 +1,28 @@
+package mg.msys.abde_back.adapter.out;
+
+import java.util.List;
+
+import org.springframework.stereotype.Component;
+
+import lombok.RequiredArgsConstructor;
+import mg.msys.abde_back.application.port.BookSearchPersistencePort;
+import mg.msys.abde_back.domain.model.BookSearchCriteria;
+import mg.msys.abde_back.domain.model.BookSearchResult;
+import mg.msys.abde_back.domain.model.PaginatedResult;
+import mg.msys.abde_back.infrastructure.repository.BookSearchJpaRepository;
+
+@Component
+@RequiredArgsConstructor
+public class BookSearchPersistenceAdapter implements BookSearchPersistencePort {
+    private final BookSearchJpaRepository bookSearchJpaRepository;
+
+    @Override
+    public List<BookSearchResult> search(BookSearchCriteria criteria) {
+        return bookSearchJpaRepository.search(criteria);
+    }
+
+    @Override
+    public PaginatedResult<BookSearchResult> searchPage(BookSearchCriteria criteria) {
+        return bookSearchJpaRepository.searchPage(criteria);
+    }
+}
