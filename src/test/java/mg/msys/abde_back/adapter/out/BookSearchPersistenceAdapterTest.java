@@ -126,14 +126,12 @@ class BookSearchPersistenceAdapterTest extends AbstractAdapterTest {
 
         assertThat(result.items()).isNotEmpty();
         BookSearchResult firstResult = result.items().get(0);
-        
+
         assertThat(firstResult.authors()).allMatch(
-            author -> author.id() != null,
-            "All AuthorReference must have non-null id"
-        ).allMatch(
-            author -> author.fullName() != null && !author.fullName().isEmpty(),
-            "All AuthorReference must have non-empty fullName"
-        );
+                author -> author.id() != null,
+                "All AuthorReference must have non-null id").allMatch(
+                        author -> author.fullName() != null && !author.fullName().isEmpty(),
+                        "All AuthorReference must have non-empty fullName");
     }
 
     @Test
