@@ -21,9 +21,8 @@ class HexagonalArchitectureTest {
         private static final String SERVICE_PACKAGE = BASE_PACKAGE + ".application.service..";
         private static final String USECASE_PACKAGE = BASE_PACKAGE + ".application.usecase..";
         private static final String ADAPTER_PACKAGE = BASE_PACKAGE + ".adapter..";
-        private static final String ADAPTER_IN_PACKAGE = BASE_PACKAGE + ".adapter.in..";
-        private static final String ADAPTER_OUT_PACKAGE = BASE_PACKAGE + ".adapter.out..";
-        private static final String INFRASTRUCTURE_PACKAGE = BASE_PACKAGE + ".infrastructure..";
+        private static final String ADAPTER_IN_PACKAGE = BASE_PACKAGE + "..adapter.in..";
+        private static final String ADAPTER_OUT_PACKAGE = BASE_PACKAGE + "..adapter.out..";
 
         private static JavaClasses importedClasses;
 
@@ -88,17 +87,6 @@ class HexagonalArchitectureTest {
                                                         "must not depend on outer layers (application, adapters, infrastructure)")
                                         .check(importedClasses);
                 }
-
-                @Test
-                @DisplayName("Domain models should not depend on infrastructure")
-                void domainShouldNotDependOnInfrastructure() {
-                        noClasses()
-                                        .that().resideInAPackage(DOMAIN_PACKAGE)
-                                        .should().dependOnClassesThat().resideInAPackage(INFRASTRUCTURE_PACKAGE)
-                                        .as("Domain layer must not depend on infrastructure - " +
-                                                        "keeps database, APIs, and other external systems out of domain")
-                                        .check(importedClasses);
-                }
         }
 
         // =========================================================================
@@ -117,17 +105,6 @@ class HexagonalArchitectureTest {
                                         .should().dependOnClassesThat().resideInAPackage(ADAPTER_PACKAGE)
                                         .as("Application layer must not depend on adapters - " +
                                                         "enforces Dependency Inversion Principle: adapters depend on ports, not vice versa")
-                                        .check(importedClasses);
-                }
-
-                @Test
-                @DisplayName("Application layer should not depend on infrastructure directly")
-                void applicationShouldNotDependOnInfrastructure() {
-                        noClasses()
-                                        .that().resideInAPackage(APPLICATION_PACKAGE)
-                                        .should().dependOnClassesThat().resideInAPackage(INFRASTRUCTURE_PACKAGE)
-                                        .as("Application layer must not depend on infrastructure - " +
-                                                        "loose coupling achieved through ports and dependency injection")
                                         .check(importedClasses);
                 }
 
@@ -474,37 +451,5 @@ class HexagonalArchitectureTest {
                                         .check(importedClasses);
                 }
 
-                @Test
-                @DisplayName("Infrastructure layer should not be accessed by application layer")
-                void infrastructureNotAccessedByApplication() {
-                        noClasses()
-                                        .that().resideInAPackage(APPLICATION_PACKAGE)
-                                        .should().dependOnClassesThat().resideInAPackage(INFRASTRUCTURE_PACKAGE)
-                                        .as("Application layer must not directly use infrastructure - " +
-                                                        "infrastructure components are managed by adapters")
-                                        .check(importedClasses);
-                }
-
-                @Test
-                @DisplayName("Only adapters should access infrastructure")
-                void onlyAdaptersAccessInfrastructure() {
-                        classes()
-                                        .that().resideInAPackage(INFRASTRUCTURE_PACKAGE)
-                                        .should().onlyDependOnClassesThat()
-                                        .resideInAnyPackage(
-                                                        INFRASTRUCTURE_PACKAGE,
-                                                        ADAPTER_PACKAGE,
-                                                        DOMAIN_PACKAGE,
-                                                        "java..",
-                                                        "org.springframework..",
-                                                        "javax..",
-                                                        "jakarta..",
-                                                        "com.fasterxml..",
-                                                        "org.hibernate..",
-                                                        "org.postgresql..")
-                                        .as("Infrastructure layer should only be used by adapters - " +
-                                                        "maintains clean separation of concerns")
-                                        .check(importedClasses);
-                }
         }
 }

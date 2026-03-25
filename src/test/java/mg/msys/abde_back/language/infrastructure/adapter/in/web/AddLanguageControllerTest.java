@@ -1,4 +1,4 @@
-package mg.msys.abde_back.adapter.in;
+package mg.msys.abde_back.language.infrastructure.adapter.in.web;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
@@ -27,9 +27,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import mg.msys.abde_back.adapter.in.exception.GlobalExceptionHandler;
 import mg.msys.abde_back.application.usecase.language.AddLanguageUseCase;
 import mg.msys.abde_back.domain.model.Language;
+import mg.msys.abde_back.language.in.web.LanguageController;
+import mg.msys.abde_back.shared.infrastructure.adapter.in.web.exception.GlobalExceptionHandler;
 
 @DisplayName("[Adapter/In] Add Language REST Controller Tests")
 class AddLanguageControllerTest {

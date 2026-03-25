@@ -1,4 +1,4 @@
-package mg.msys.abde_back.adapter.in;
+package mg.msys.abde_back.book.infrastructure.adapter.in.web;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -19,10 +19,10 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import mg.msys.abde_back.adapter.in.exception.GlobalExceptionHandler;
 import mg.msys.abde_back.application.usecase.book.SearchBooksUseCase;
 import mg.msys.abde_back.domain.model.BookSearchResult;
 import mg.msys.abde_back.domain.model.PaginatedResult;
+import mg.msys.abde_back.shared.infrastructure.adapter.in.web.exception.GlobalExceptionHandler;
 
 @DisplayName("[Adapter/In] Book Controller Tests")
 class BookControllerTest {
