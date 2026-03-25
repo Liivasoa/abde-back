@@ -1,4 +1,4 @@
-package mg.msys.abde_back.language.in.web.dto;
+package mg.msys.abde_back.language.infrastructure.adapter.in.web.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
