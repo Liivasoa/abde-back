@@ -1,4 +1,4 @@
-package mg.msys.abde_back.adapter.in;
+package mg.msys.abde_back.language.in.web;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -14,11 +14,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import mg.msys.abde_back.adapter.in.dto.ErrorResponse;
-import mg.msys.abde_back.adapter.in.dto.LanguageDto;
-import mg.msys.abde_back.adapter.in.dto.ResourceResponse;
 import mg.msys.abde_back.application.usecase.language.AddLanguageUseCase;
 import mg.msys.abde_back.domain.model.Language;
+import mg.msys.abde_back.language.in.web.dto.LanguageDto;
+import mg.msys.abde_back.shared.infrastructure.adapter.in.web.dto.ResourceResponse;
+import mg.msys.abde_back.shared.infrastructure.adapter.in.web.dto.ErrorResponse;
 
 import java.net.URI;
 
