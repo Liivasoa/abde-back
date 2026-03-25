@@ -1,4 +1,4 @@
-package mg.msys.abde_back.adapter.in;
+package mg.msys.abde_back.book.infrastructure.adapter.in.web;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,13 +13,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import mg.msys.abde_back.adapter.in.dto.AuthorResponseDto;
-import mg.msys.abde_back.adapter.in.dto.BookResponseDto;
-import mg.msys.abde_back.adapter.in.dto.ErrorResponse;
-import mg.msys.abde_back.adapter.in.dto.PaginatedBookResponseDto;
 import mg.msys.abde_back.application.usecase.book.SearchBooksUseCase;
+import mg.msys.abde_back.book.infrastructure.adapter.in.web.dto.AuthorResponseDto;
+import mg.msys.abde_back.book.infrastructure.adapter.in.web.dto.BookResponseDto;
+import mg.msys.abde_back.book.infrastructure.adapter.in.web.dto.PaginatedBookResponseDto;
 import mg.msys.abde_back.domain.model.BookSearchResult;
 import mg.msys.abde_back.domain.model.PaginatedResult;
+import mg.msys.abde_back.shared.infrastructure.adapter.in.web.dto.ErrorResponse;
 
 @RestController
 @RequestMapping("/api/book")

@@ -1,4 +1,4 @@
-package mg.msys.abde_back.adapter.in.dto;
+package mg.msys.abde_back.book.infrastructure.adapter.in.web.dto;
 
 import java.time.LocalDate;
 import java.util.List;
