@@ -1,4 +1,4 @@
-package mg.msys.abde_back.adapter.in.exception;
+package mg.msys.abde_back.shared.infrastructure.adapter.in.web.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -6,7 +6,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import mg.msys.abde_back.adapter.in.dto.ErrorResponse;
+import mg.msys.abde_back.shared.infrastructure.adapter.in.web.dto.ErrorResponse;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {

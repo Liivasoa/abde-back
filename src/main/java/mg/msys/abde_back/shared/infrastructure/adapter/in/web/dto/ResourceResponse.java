@@ -1,4 +1,4 @@
-package mg.msys.abde_back.adapter.in.dto;
+package mg.msys.abde_back.shared.infrastructure.adapter.in.web.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
