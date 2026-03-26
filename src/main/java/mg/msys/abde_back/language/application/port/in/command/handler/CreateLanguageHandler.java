@@ -3,9 +3,9 @@ package mg.msys.abde_back.language.application.port.in.command.handler;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
-import mg.msys.abde_back.application.port.LanguagePersistencePort;
 import mg.msys.abde_back.domain.model.Language;
 import mg.msys.abde_back.language.application.port.in.command.CreateLanguageUseCase;
+import mg.msys.abde_back.language.application.port.out.LanguagePersistencePort;
 
 @Component
 @RequiredArgsConstructor
