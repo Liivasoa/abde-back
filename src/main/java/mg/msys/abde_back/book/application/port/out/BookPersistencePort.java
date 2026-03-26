@@ -1,4 +1,4 @@
-package mg.msys.abde_back.application.port;
+package mg.msys.abde_back.book.application.port.out;
 
 import java.util.List;
 
@@ -6,7 +6,7 @@ import mg.msys.abde_back.book.application.port.in.query.dto.BookSearchCriteria;
 import mg.msys.abde_back.book.application.port.in.query.dto.BookSearchResult;
 import mg.msys.abde_back.domain.model.PaginatedResult;
 
-public interface BookSearchPersistencePort {
+public interface BookPersistencePort {
 
     List<BookSearchResult> search(BookSearchCriteria criteria);
 

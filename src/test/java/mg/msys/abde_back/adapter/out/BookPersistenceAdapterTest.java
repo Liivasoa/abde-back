@@ -16,14 +16,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
-import mg.msys.abde_back.application.port.BookSearchPersistencePort;
 import mg.msys.abde_back.book.application.port.in.query.dto.BookSearchCriteria;
 import mg.msys.abde_back.book.application.port.in.query.dto.BookSearchResult;
+import mg.msys.abde_back.book.application.port.out.BookPersistencePort;
 import mg.msys.abde_back.domain.model.PaginatedResult;
 import mg.msys.abde_back.infrastructure.repository.BookSearchJpaRepository;
 
 @DisplayName("[Adapter/Out] Book Search Persistence Adapter Tests")
-class BookSearchPersistenceAdapterTest extends AbstractAdapterTest {
+class BookPersistenceAdapterTest extends AbstractAdapterTest {
 
         @Autowired
         private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
@@ -31,7 +31,7 @@ class BookSearchPersistenceAdapterTest extends AbstractAdapterTest {
         @Autowired
         private JdbcTemplate jdbcTemplate;
 
-        private BookSearchPersistencePort bookSearchPersistencePort;
+        private BookPersistencePort bookSearchPersistencePort;
 
         @BeforeEach
         void setUp() {

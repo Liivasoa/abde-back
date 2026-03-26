@@ -5,17 +5,17 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
-import mg.msys.abde_back.application.port.BookSearchPersistencePort;
 import mg.msys.abde_back.book.application.port.in.query.SearchBookUseCase;
 import mg.msys.abde_back.book.application.port.in.query.dto.BookSearchCriteria;
 import mg.msys.abde_back.book.application.port.in.query.dto.BookSearchResult;
+import mg.msys.abde_back.book.application.port.out.BookPersistencePort;
 import mg.msys.abde_back.domain.model.PaginatedResult;
 
 @Component
 @RequiredArgsConstructor
 public class SearchBookHandler implements SearchBookUseCase {
 
-    private final BookSearchPersistencePort bookSearchPersistencePort;
+    private final BookPersistencePort bookSearchPersistencePort;
 
     @Override
     public List<BookSearchResult> execute(Integer publicationYear, String authorName, String language, String title) {

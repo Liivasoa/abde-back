@@ -5,15 +5,15 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
-import mg.msys.abde_back.application.port.BookSearchPersistencePort;
 import mg.msys.abde_back.book.application.port.in.query.dto.BookSearchCriteria;
 import mg.msys.abde_back.book.application.port.in.query.dto.BookSearchResult;
+import mg.msys.abde_back.book.application.port.out.BookPersistencePort;
 import mg.msys.abde_back.domain.model.PaginatedResult;
 import mg.msys.abde_back.infrastructure.repository.BookSearchJpaRepository;
 
 @Component
 @RequiredArgsConstructor
-public class BookSearchPersistenceAdapter implements BookSearchPersistencePort {
+public class BookSearchPersistenceAdapter implements BookPersistencePort {
     private final BookSearchJpaRepository bookSearchJpaRepository;
 
     @Override

@@ -1,14 +1,13 @@
-package mg.msys.abde_back.application.fake;
+package mg.msys.abde_back.book.application.port.out;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import mg.msys.abde_back.application.port.BookSearchPersistencePort;
 import mg.msys.abde_back.book.application.port.in.query.dto.BookSearchCriteria;
 import mg.msys.abde_back.book.application.port.in.query.dto.BookSearchResult;
 import mg.msys.abde_back.domain.model.PaginatedResult;
 
-public class BookSearchPersistencePortFake implements BookSearchPersistencePort {
+public class BookPersistencePortFake implements BookPersistencePort {
 
     private final List<BookSearchResult> booksToReturn = new ArrayList<>();
     private long totalElementsToReturn;
