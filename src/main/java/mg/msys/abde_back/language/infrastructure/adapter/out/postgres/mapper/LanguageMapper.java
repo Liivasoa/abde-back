@@ -1,10 +1,10 @@
-package mg.msys.abde_back.adapter.out.mapper;
+package mg.msys.abde_back.language.infrastructure.adapter.out.postgres.mapper;
 
 import org.mapstruct.BeforeMapping;
 import org.mapstruct.Mapper;
 
-import mg.msys.abde_back.adapter.out.entity.LanguageEntity;
 import mg.msys.abde_back.language.domain.Language;
+import mg.msys.abde_back.language.infrastructure.adapter.out.postgres.entity.LanguageEntity;
 
 @Mapper(componentModel = "spring")
 public interface LanguageMapper {

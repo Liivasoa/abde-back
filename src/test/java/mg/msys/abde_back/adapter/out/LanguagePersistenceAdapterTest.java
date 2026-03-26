@@ -11,10 +11,11 @@ import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import mg.msys.abde_back.adapter.out.mapper.LanguageMapper;
 import mg.msys.abde_back.infrastructure.repository.LanguageJpaRepository;
 import mg.msys.abde_back.language.application.port.out.LanguagePersistencePort;
 import mg.msys.abde_back.language.domain.Language;
+import mg.msys.abde_back.language.infrastructure.adapter.out.postgres.LanguagePersistenceAdapter;
+import mg.msys.abde_back.language.infrastructure.adapter.out.postgres.mapper.LanguageMapper;
 
 public class LanguagePersistenceAdapterTest extends AbstractAdapterTest {
 

@@ -1,4 +1,4 @@
-package mg.msys.abde_back.adapter.out.entity;
+package mg.msys.abde_back.language.infrastructure.adapter.out.postgres.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

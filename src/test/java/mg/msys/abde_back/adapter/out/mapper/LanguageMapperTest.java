@@ -10,8 +10,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
-import mg.msys.abde_back.adapter.out.entity.LanguageEntity;
 import mg.msys.abde_back.language.domain.Language;
+import mg.msys.abde_back.language.infrastructure.adapter.out.postgres.entity.LanguageEntity;
+import mg.msys.abde_back.language.infrastructure.adapter.out.postgres.mapper.LanguageMapper;
 
 @DisplayName("LanguageMapper Tests")
 class LanguageMapperTest {

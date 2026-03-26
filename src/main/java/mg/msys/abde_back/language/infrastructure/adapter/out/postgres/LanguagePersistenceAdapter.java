@@ -1,14 +1,14 @@
-package mg.msys.abde_back.adapter.out;
+package mg.msys.abde_back.language.infrastructure.adapter.out.postgres;
 
 import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
-import mg.msys.abde_back.adapter.out.entity.LanguageEntity;
-import mg.msys.abde_back.adapter.out.mapper.LanguageMapper;
 import mg.msys.abde_back.infrastructure.repository.LanguageJpaRepository;
 import mg.msys.abde_back.language.application.port.out.LanguagePersistencePort;
 import mg.msys.abde_back.language.domain.Language;
+import mg.msys.abde_back.language.infrastructure.adapter.out.postgres.entity.LanguageEntity;
+import mg.msys.abde_back.language.infrastructure.adapter.out.postgres.mapper.LanguageMapper;
 
 @Component
 public class LanguagePersistenceAdapter implements LanguagePersistencePort {
