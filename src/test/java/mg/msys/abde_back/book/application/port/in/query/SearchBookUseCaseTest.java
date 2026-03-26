@@ -16,7 +16,7 @@ import mg.msys.abde_back.book.application.port.in.query.dto.BookSearchCriteria;
 import mg.msys.abde_back.book.application.port.in.query.dto.BookSearchResult;
 import mg.msys.abde_back.book.application.port.in.query.handler.SearchBookHandler;
 import mg.msys.abde_back.book.application.port.out.BookPersistencePortFake;
-import mg.msys.abde_back.domain.model.PaginatedResult;
+import mg.msys.abde_back.shared.application.port.in.query.dto.PaginatedResult;
 
 @DisplayName("[Application/Use case] Search Books Use Case Tests")
 class SearchBookUseCaseTest {

@@ -9,7 +9,7 @@ import mg.msys.abde_back.book.application.port.in.query.SearchBookUseCase;
 import mg.msys.abde_back.book.application.port.in.query.dto.BookSearchCriteria;
 import mg.msys.abde_back.book.application.port.in.query.dto.BookSearchResult;
 import mg.msys.abde_back.book.application.port.out.BookPersistencePort;
-import mg.msys.abde_back.domain.model.PaginatedResult;
+import mg.msys.abde_back.shared.application.port.in.query.dto.PaginatedResult;
 
 @Component
 @RequiredArgsConstructor

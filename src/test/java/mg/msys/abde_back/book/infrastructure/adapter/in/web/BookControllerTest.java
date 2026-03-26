@@ -21,7 +21,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import mg.msys.abde_back.book.application.port.in.query.SearchBookUseCase;
 import mg.msys.abde_back.book.application.port.in.query.dto.BookSearchResult;
-import mg.msys.abde_back.domain.model.PaginatedResult;
+import mg.msys.abde_back.shared.application.port.in.query.dto.PaginatedResult;
 import mg.msys.abde_back.shared.infrastructure.adapter.in.web.exception.GlobalExceptionHandler;
 
 @DisplayName("[Adapter/In] Book Controller Tests")

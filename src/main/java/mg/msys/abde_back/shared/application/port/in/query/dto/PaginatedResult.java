@@ -1,4 +1,4 @@
-package mg.msys.abde_back.domain.model;
+package mg.msys.abde_back.shared.application.port.in.query.dto;
 
 import java.util.List;
 

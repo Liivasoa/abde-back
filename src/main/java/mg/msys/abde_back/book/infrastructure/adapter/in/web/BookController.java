@@ -18,7 +18,7 @@ import mg.msys.abde_back.book.application.port.in.query.dto.BookSearchResult;
 import mg.msys.abde_back.book.infrastructure.adapter.in.web.dto.AuthorResponseDto;
 import mg.msys.abde_back.book.infrastructure.adapter.in.web.dto.BookResponseDto;
 import mg.msys.abde_back.book.infrastructure.adapter.in.web.dto.PaginatedBookResponseDto;
-import mg.msys.abde_back.domain.model.PaginatedResult;
+import mg.msys.abde_back.shared.application.port.in.query.dto.PaginatedResult;
 import mg.msys.abde_back.shared.infrastructure.adapter.in.web.dto.ErrorResponse;
 
 @RestController
