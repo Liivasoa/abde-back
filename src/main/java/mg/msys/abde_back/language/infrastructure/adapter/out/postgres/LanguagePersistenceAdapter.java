@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
-import mg.msys.abde_back.infrastructure.repository.LanguageJpaRepository;
 import mg.msys.abde_back.language.application.port.out.LanguagePersistencePort;
 import mg.msys.abde_back.language.domain.Language;
 import mg.msys.abde_back.language.infrastructure.adapter.out.postgres.entity.LanguageEntity;

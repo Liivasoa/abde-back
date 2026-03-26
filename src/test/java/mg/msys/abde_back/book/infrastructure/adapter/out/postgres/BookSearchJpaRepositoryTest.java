@@ -1,4 +1,4 @@
-package mg.msys.abde_back.infrastructure.repository;
+package mg.msys.abde_back.book.infrastructure.adapter.out.postgres;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -23,6 +23,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import mg.msys.abde_back.book.application.port.in.query.dto.BookSearchResult;
+import mg.msys.abde_back.book.infrastructure.adapter.out.postgres.BookSearchJpaRepository;
 
 @DisplayName("[Repository] Book Search JPA Repository - RowMapper Tests")
 class BookSearchJpaRepositoryTest {

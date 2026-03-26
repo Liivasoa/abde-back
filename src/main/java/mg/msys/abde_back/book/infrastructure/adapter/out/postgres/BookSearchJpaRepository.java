@@ -1,4 +1,4 @@
-package mg.msys.abde_back.infrastructure.repository;
+package mg.msys.abde_back.book.infrastructure.adapter.out.postgres;
 
 import java.sql.Array;
 import java.sql.SQLException;

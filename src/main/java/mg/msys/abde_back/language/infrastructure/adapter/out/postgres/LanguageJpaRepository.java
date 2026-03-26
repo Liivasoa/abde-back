@@ -1,4 +1,4 @@
-package mg.msys.abde_back.infrastructure.repository;
+package mg.msys.abde_back.language.infrastructure.adapter.out.postgres;
 
 import java.util.Optional;
 

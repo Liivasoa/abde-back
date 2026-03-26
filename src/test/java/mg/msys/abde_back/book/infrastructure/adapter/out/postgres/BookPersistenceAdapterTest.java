@@ -20,7 +20,6 @@ import mg.msys.abde_back.book.application.port.in.query.dto.BookSearchCriteria;
 import mg.msys.abde_back.book.application.port.in.query.dto.BookSearchResult;
 import mg.msys.abde_back.book.application.port.out.BookPersistencePort;
 import mg.msys.abde_back.domain.model.PaginatedResult;
-import mg.msys.abde_back.infrastructure.repository.BookSearchJpaRepository;
 import mg.msys.abde_back.shared.infrastructure.adapter.out.postgres.AbstractAdapterTest;
 
 @DisplayName("[Adapter/Out] Book Search Persistence Adapter Tests")
