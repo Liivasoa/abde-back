@@ -4,9 +4,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
-import mg.msys.abde_back.domain.model.Language;
 import mg.msys.abde_back.language.application.port.in.command.handler.CreateLanguageHandler;
 import mg.msys.abde_back.language.application.port.out.LanguagePersistencePortFake;
+import mg.msys.abde_back.language.domain.Language;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

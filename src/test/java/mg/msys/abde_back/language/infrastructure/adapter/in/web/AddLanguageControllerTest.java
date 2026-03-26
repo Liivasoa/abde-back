@@ -27,8 +27,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import mg.msys.abde_back.domain.model.Language;
 import mg.msys.abde_back.language.application.port.in.command.CreateLanguageUseCase;
+import mg.msys.abde_back.language.domain.Language;
 import mg.msys.abde_back.shared.infrastructure.adapter.in.web.exception.GlobalExceptionHandler;
 
 @DisplayName("[Adapter/In] Add Language REST Controller Tests")

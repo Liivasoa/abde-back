@@ -3,7 +3,7 @@ package mg.msys.abde_back.language.application.port.out;
 import java.util.ArrayList;
 import java.util.List;
 
-import mg.msys.abde_back.domain.model.Language;
+import mg.msys.abde_back.language.domain.Language;
 
 public class LanguagePersistencePortFake implements LanguagePersistencePort {
 

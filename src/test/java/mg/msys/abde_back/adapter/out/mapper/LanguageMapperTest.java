@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
 import mg.msys.abde_back.adapter.out.entity.LanguageEntity;
-import mg.msys.abde_back.domain.model.Language;
+import mg.msys.abde_back.language.domain.Language;
 
 @DisplayName("LanguageMapper Tests")
 class LanguageMapperTest {

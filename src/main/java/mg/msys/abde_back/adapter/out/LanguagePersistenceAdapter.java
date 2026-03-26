@@ -6,9 +6,9 @@ import org.springframework.stereotype.Component;
 
 import mg.msys.abde_back.adapter.out.entity.LanguageEntity;
 import mg.msys.abde_back.adapter.out.mapper.LanguageMapper;
-import mg.msys.abde_back.domain.model.Language;
 import mg.msys.abde_back.infrastructure.repository.LanguageJpaRepository;
 import mg.msys.abde_back.language.application.port.out.LanguagePersistencePort;
+import mg.msys.abde_back.language.domain.Language;
 
 @Component
 public class LanguagePersistenceAdapter implements LanguagePersistencePort {

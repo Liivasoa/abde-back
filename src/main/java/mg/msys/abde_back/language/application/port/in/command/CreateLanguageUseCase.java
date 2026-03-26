@@ -1,6 +1,6 @@
 package mg.msys.abde_back.language.application.port.in.command;
 
-import mg.msys.abde_back.domain.model.Language;
+import mg.msys.abde_back.language.domain.Language;
 
 public interface CreateLanguageUseCase {
 

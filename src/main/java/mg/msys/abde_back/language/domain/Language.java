@@ -1,4 +1,4 @@
-package mg.msys.abde_back.domain.model;
+package mg.msys.abde_back.language.domain;
 
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -18,16 +18,16 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode
 public class Language {
-    
+
     @Getter(AccessLevel.PUBLIC)
     private final String code;
-    
+
     private String label;
-    
+
     /**
      * Creates a new Language.
      *
-     * @param code the unique language code (will be converted to uppercase)
+     * @param code  the unique language code (will be converted to uppercase)
      * @param label the human-readable name
      * @throws IllegalArgumentException if code or label is null or empty
      */
@@ -35,7 +35,7 @@ public class Language {
         this.code = validateAndNormalizeCode(code);
         this.label = validateLabel(label);
     }
-    
+
     /**
      * Updates the language label.
      *
@@ -45,7 +45,7 @@ public class Language {
     public void setLabel(String label) {
         this.label = validateLabel(label);
     }
-    
+
     /**
      * Validates and normalizes the code to uppercase.
      *
@@ -59,7 +59,7 @@ public class Language {
         }
         return code.toUpperCase();
     }
-    
+
     /**
      * Validates the label using modern Java features.
      *

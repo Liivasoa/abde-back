@@ -4,7 +4,7 @@ import org.mapstruct.BeforeMapping;
 import org.mapstruct.Mapper;
 
 import mg.msys.abde_back.adapter.out.entity.LanguageEntity;
-import mg.msys.abde_back.domain.model.Language;
+import mg.msys.abde_back.language.domain.Language;
 
 @Mapper(componentModel = "spring")
 public interface LanguageMapper {
