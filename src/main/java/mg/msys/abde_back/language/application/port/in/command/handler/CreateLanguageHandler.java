@@ -1,15 +1,15 @@
-package mg.msys.abde_back.application.service.language;
+package mg.msys.abde_back.language.application.port.in.command.handler;
 
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
 import mg.msys.abde_back.application.port.LanguagePersistencePort;
-import mg.msys.abde_back.application.usecase.language.AddLanguageUseCase;
 import mg.msys.abde_back.domain.model.Language;
+import mg.msys.abde_back.language.application.port.in.command.CreateLanguageUseCase;
 
 @Component
 @RequiredArgsConstructor
-public class AddLanguageService implements AddLanguageUseCase {
+public class CreateLanguageHandler implements CreateLanguageUseCase {
 
     private final LanguagePersistencePort languagePersistencePort;
 

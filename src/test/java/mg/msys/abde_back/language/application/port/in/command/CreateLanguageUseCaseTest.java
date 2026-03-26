@@ -1,12 +1,13 @@
-package mg.msys.abde_back.application.usecase.language;
+package mg.msys.abde_back.language.application.port.in.command;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
 import mg.msys.abde_back.application.fake.LanguagePersistencePortFake;
-import mg.msys.abde_back.application.service.language.AddLanguageService;
 import mg.msys.abde_back.domain.model.Language;
+import mg.msys.abde_back.language.application.port.in.command.handler.CreateLanguageHandler;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -24,15 +25,15 @@ import org.junit.jupiter.api.Test;
  * - Avoid testing framework code or external libraries
  */
 @DisplayName("[Application/Use case] Add Language Use Case Tests")
-class AddLanguageUseCaseTest {
+class CreateLanguageUseCaseTest {
 
-    private AddLanguageUseCase useCase;
+    private CreateLanguageUseCase useCase;
     private LanguagePersistencePortFake fakePort;
 
     @BeforeEach
     void setUp() {
         fakePort = new LanguagePersistencePortFake();
-        useCase = new AddLanguageService(fakePort);
+        useCase = new CreateLanguageHandler(fakePort);
     }
 
     // ==================== MAIN FLOW TESTS ====================

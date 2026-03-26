@@ -14,8 +14,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import mg.msys.abde_back.application.usecase.language.AddLanguageUseCase;
 import mg.msys.abde_back.domain.model.Language;
+import mg.msys.abde_back.language.application.port.in.command.CreateLanguageUseCase;
 import mg.msys.abde_back.language.infrastructure.adapter.in.web.dto.LanguageDto;
 import mg.msys.abde_back.shared.infrastructure.adapter.in.web.dto.ResourceResponse;
 import mg.msys.abde_back.shared.infrastructure.adapter.in.web.dto.ErrorResponse;
@@ -28,7 +28,7 @@ import java.net.URI;
 @Tag(name = "Language", description = "Manage language resources")
 public class LanguageController {
 
-        private final AddLanguageUseCase addLanguageUseCase;
+        private final CreateLanguageUseCase addLanguageUseCase;
 
         @PostMapping
         @Operation(summary = "Create a new language", description = "Creates a new language with the provided code and label")

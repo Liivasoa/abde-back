@@ -1,8 +1,8 @@
-package mg.msys.abde_back.application.usecase.language;
+package mg.msys.abde_back.language.application.port.in.command;
 
 import mg.msys.abde_back.domain.model.Language;
 
-public interface AddLanguageUseCase {
+public interface CreateLanguageUseCase {
 
     /**
      * Executes the add language use case.
