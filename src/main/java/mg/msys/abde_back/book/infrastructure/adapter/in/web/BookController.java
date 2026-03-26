@@ -13,11 +13,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import mg.msys.abde_back.application.usecase.book.SearchBooksUseCase;
+import mg.msys.abde_back.book.application.port.in.query.SearchBookUseCase;
+import mg.msys.abde_back.book.application.port.in.query.dto.BookSearchResult;
 import mg.msys.abde_back.book.infrastructure.adapter.in.web.dto.AuthorResponseDto;
 import mg.msys.abde_back.book.infrastructure.adapter.in.web.dto.BookResponseDto;
 import mg.msys.abde_back.book.infrastructure.adapter.in.web.dto.PaginatedBookResponseDto;
-import mg.msys.abde_back.domain.model.BookSearchResult;
 import mg.msys.abde_back.domain.model.PaginatedResult;
 import mg.msys.abde_back.shared.infrastructure.adapter.in.web.dto.ErrorResponse;
 
@@ -27,7 +27,7 @@ import mg.msys.abde_back.shared.infrastructure.adapter.in.web.dto.ErrorResponse;
 @Tag(name = "Book", description = "Search books using optional filters")
 public class BookController {
 
-        private final SearchBooksUseCase searchBooksUseCase;
+        private final SearchBookUseCase searchBooksUseCase;
 
         @GetMapping("/search")
         @Operation(summary = "Search books", description = "Search books by optional publication year, author name, language, and title")

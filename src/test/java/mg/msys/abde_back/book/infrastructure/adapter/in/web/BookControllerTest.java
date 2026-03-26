@@ -19,8 +19,8 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import mg.msys.abde_back.application.usecase.book.SearchBooksUseCase;
-import mg.msys.abde_back.domain.model.BookSearchResult;
+import mg.msys.abde_back.book.application.port.in.query.SearchBookUseCase;
+import mg.msys.abde_back.book.application.port.in.query.dto.BookSearchResult;
 import mg.msys.abde_back.domain.model.PaginatedResult;
 import mg.msys.abde_back.shared.infrastructure.adapter.in.web.exception.GlobalExceptionHandler;
 
@@ -28,7 +28,7 @@ import mg.msys.abde_back.shared.infrastructure.adapter.in.web.exception.GlobalEx
 class BookControllerTest {
 
         @Mock
-        private SearchBooksUseCase searchBooksUseCase;
+        private SearchBookUseCase searchBooksUseCase;
 
         @InjectMocks
         private BookController bookController;

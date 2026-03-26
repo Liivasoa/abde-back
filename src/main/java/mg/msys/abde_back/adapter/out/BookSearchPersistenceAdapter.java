@@ -6,8 +6,8 @@ import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
 import mg.msys.abde_back.application.port.BookSearchPersistencePort;
-import mg.msys.abde_back.domain.model.BookSearchCriteria;
-import mg.msys.abde_back.domain.model.BookSearchResult;
+import mg.msys.abde_back.book.application.port.in.query.dto.BookSearchCriteria;
+import mg.msys.abde_back.book.application.port.in.query.dto.BookSearchResult;
 import mg.msys.abde_back.domain.model.PaginatedResult;
 import mg.msys.abde_back.infrastructure.repository.BookSearchJpaRepository;
 

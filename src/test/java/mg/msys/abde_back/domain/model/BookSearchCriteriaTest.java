@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import mg.msys.abde_back.book.application.port.in.query.dto.BookSearchCriteria;
+
 @DisplayName("[Domain/Model] Book Search Criteria Tests")
 class BookSearchCriteriaTest {
 

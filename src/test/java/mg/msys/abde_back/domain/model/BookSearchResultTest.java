@@ -11,6 +11,8 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import mg.msys.abde_back.book.application.port.in.query.dto.BookSearchResult;
+
 @DisplayName("[Domain] BookSearchResult Tests")
 class BookSearchResultTest {
 

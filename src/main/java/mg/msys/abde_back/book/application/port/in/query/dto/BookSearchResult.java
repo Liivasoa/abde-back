@@ -1,4 +1,4 @@
-package mg.msys.abde_back.domain.model;
+package mg.msys.abde_back.book.application.port.in.query.dto;
 
 import java.time.LocalDate;
 import java.util.List;

@@ -13,21 +13,22 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import mg.msys.abde_back.application.fake.BookSearchPersistencePortFake;
-import mg.msys.abde_back.application.service.book.SearchBooksService;
-import mg.msys.abde_back.domain.model.BookSearchCriteria;
-import mg.msys.abde_back.domain.model.BookSearchResult;
+import mg.msys.abde_back.book.application.port.in.query.SearchBookUseCase;
+import mg.msys.abde_back.book.application.port.in.query.dto.BookSearchCriteria;
+import mg.msys.abde_back.book.application.port.in.query.dto.BookSearchResult;
+import mg.msys.abde_back.book.application.port.in.query.handler.SearchBookHandler;
 import mg.msys.abde_back.domain.model.PaginatedResult;
 
 @DisplayName("[Application/Use case] Search Books Use Case Tests")
-class SearchBooksUseCaseTest {
+class SearchBookUseCaseTest {
 
-    private SearchBooksUseCase useCase;
+    private SearchBookUseCase useCase;
     private BookSearchPersistencePortFake fakePort;
 
     @BeforeEach
     void setUp() {
         fakePort = new BookSearchPersistencePortFake();
-        useCase = new SearchBooksService(fakePort);
+        useCase = new SearchBookHandler(fakePort);
     }
 
     @Test

@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
-import mg.msys.abde_back.domain.model.BookSearchResult;
+import mg.msys.abde_back.book.application.port.in.query.dto.BookSearchResult;
 
 @DisplayName("[Repository] Book Search JPA Repository - RowMapper Tests")
 class BookSearchJpaRepositoryTest {

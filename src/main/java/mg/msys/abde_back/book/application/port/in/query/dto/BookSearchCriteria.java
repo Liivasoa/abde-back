@@ -1,4 +1,4 @@
-package mg.msys.abde_back.domain.model;
+package mg.msys.abde_back.book.application.port.in.query.dto;
 
 public record BookSearchCriteria(
         Integer publicationYear,

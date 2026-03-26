@@ -12,8 +12,8 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import mg.msys.abde_back.domain.model.BookSearchCriteria;
-import mg.msys.abde_back.domain.model.BookSearchResult;
+import mg.msys.abde_back.book.application.port.in.query.dto.BookSearchCriteria;
+import mg.msys.abde_back.book.application.port.in.query.dto.BookSearchResult;
 import mg.msys.abde_back.domain.model.PaginatedResult;
 
 @Repository
