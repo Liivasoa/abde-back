@@ -1,4 +1,4 @@
-package mg.msys.abde_back.adapter.out;
+package mg.msys.abde_back.shared.infrastructure.adapter.out.postgres;
 
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;

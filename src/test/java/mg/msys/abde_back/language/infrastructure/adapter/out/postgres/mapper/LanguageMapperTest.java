@@ -1,4 +1,4 @@
-package mg.msys.abde_back.adapter.out.mapper;
+package mg.msys.abde_back.language.infrastructure.adapter.out.postgres.mapper;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -12,7 +12,6 @@ import org.mapstruct.factory.Mappers;
 
 import mg.msys.abde_back.language.domain.Language;
 import mg.msys.abde_back.language.infrastructure.adapter.out.postgres.entity.LanguageEntity;
-import mg.msys.abde_back.language.infrastructure.adapter.out.postgres.mapper.LanguageMapper;
 
 @DisplayName("LanguageMapper Tests")
 class LanguageMapperTest {

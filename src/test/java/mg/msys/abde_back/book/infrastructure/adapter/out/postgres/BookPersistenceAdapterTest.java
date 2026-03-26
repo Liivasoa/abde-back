@@ -1,4 +1,4 @@
-package mg.msys.abde_back.adapter.out;
+package mg.msys.abde_back.book.infrastructure.adapter.out.postgres;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -21,6 +21,7 @@ import mg.msys.abde_back.book.application.port.in.query.dto.BookSearchResult;
 import mg.msys.abde_back.book.application.port.out.BookPersistencePort;
 import mg.msys.abde_back.domain.model.PaginatedResult;
 import mg.msys.abde_back.infrastructure.repository.BookSearchJpaRepository;
+import mg.msys.abde_back.shared.infrastructure.adapter.out.postgres.AbstractAdapterTest;
 
 @DisplayName("[Adapter/Out] Book Search Persistence Adapter Tests")
 class BookPersistenceAdapterTest extends AbstractAdapterTest {

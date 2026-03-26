@@ -1,4 +1,4 @@
-package mg.msys.abde_back.adapter.out;
+package mg.msys.abde_back.book.infrastructure.adapter.out.postgres;
 
 import java.util.List;
 

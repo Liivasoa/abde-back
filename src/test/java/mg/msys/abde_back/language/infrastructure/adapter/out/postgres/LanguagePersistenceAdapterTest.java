@@ -1,4 +1,4 @@
-package mg.msys.abde_back.adapter.out;
+package mg.msys.abde_back.language.infrastructure.adapter.out.postgres;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -14,8 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import mg.msys.abde_back.infrastructure.repository.LanguageJpaRepository;
 import mg.msys.abde_back.language.application.port.out.LanguagePersistencePort;
 import mg.msys.abde_back.language.domain.Language;
-import mg.msys.abde_back.language.infrastructure.adapter.out.postgres.LanguagePersistenceAdapter;
 import mg.msys.abde_back.language.infrastructure.adapter.out.postgres.mapper.LanguageMapper;
+import mg.msys.abde_back.shared.infrastructure.adapter.out.postgres.AbstractAdapterTest;
 
 public class LanguagePersistenceAdapterTest extends AbstractAdapterTest {
 
