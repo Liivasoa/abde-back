@@ -14,19 +14,11 @@ public class BookPersistencePortFake implements BookPersistencePort {
     private BookSearchCriteria lastCriteria;
     private int callCount;
     private int searchCallCount;
-    private int searchPageCallCount;
 
     @Override
-    public List<BookSearchResult> search(BookSearchCriteria criteria) {
+    public PaginatedResult<BookSearchResult> search(BookSearchCriteria criteria) {
         registerCall(criteria);
         this.searchCallCount++;
-        return List.copyOf(booksToReturn);
-    }
-
-    @Override
-    public PaginatedResult<BookSearchResult> searchPage(BookSearchCriteria criteria) {
-        registerCall(criteria);
-        this.searchPageCallCount++;
         return PaginatedResult.of(List.copyOf(booksToReturn), criteria.page(), criteria.size(), totalElementsToReturn);
     }
 
@@ -54,9 +46,5 @@ public class BookPersistencePortFake implements BookPersistencePort {
 
     public int getSearchCallCount() {
         return searchCallCount;
-    }
-
-    public int getSearchPageCallCount() {
-        return searchPageCallCount;
     }
 }

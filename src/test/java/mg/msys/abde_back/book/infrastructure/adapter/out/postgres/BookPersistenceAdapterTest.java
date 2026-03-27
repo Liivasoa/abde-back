@@ -7,7 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.Constructor;
 import java.time.LocalDate;
-import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -69,22 +68,10 @@ class BookPersistenceAdapterTest extends AbstractAdapterTest {
         }
 
         @Test
-        @DisplayName("Should return non paginated search results")
-        void testSearchWithoutPagination() {
-                List<BookSearchResult> result = bookSearchPersistencePort
-                                .search(new BookSearchCriteria(null, null, null, null));
-
-                assertThat(result).hasSize(5);
-                assertThat(result)
-                                .allMatch(book -> book.id() != null)
-                                .allMatch(book -> book.title() != null && !book.title().isBlank());
-        }
-
-        @Test
         @DisplayName("Should return paginated book results when no filter is provided")
         void testSearchWithoutFilters() {
                 PaginatedResult<BookSearchResult> result = bookSearchPersistencePort
-                                .searchPage(new BookSearchCriteria(null, null, null, null, 0, 2));
+                                .search(new BookSearchCriteria(null, null, null, null, 0, 2));
 
                 assertEquals(2, result.items().size());
                 assertEquals(5, result.totalElements());
@@ -96,7 +83,7 @@ class BookPersistenceAdapterTest extends AbstractAdapterTest {
         @DisplayName("Should filter by publication year with pagination and return BookSearchResult")
         void testSearchByPublicationYear() {
                 PaginatedResult<BookSearchResult> result = bookSearchPersistencePort
-                                .searchPage(new BookSearchCriteria(1949, null, null, null, 0, 10));
+                                .search(new BookSearchCriteria(1949, null, null, null, 0, 10));
 
                 assertEquals(1, result.items().size());
                 BookSearchResult firstResult = result.items().get(0);
@@ -110,7 +97,7 @@ class BookPersistenceAdapterTest extends AbstractAdapterTest {
         @DisplayName("Should filter by author name with pagination and return BookSearchResult with AuthorReference")
         void testSearchByAuthorName() {
                 PaginatedResult<BookSearchResult> result = bookSearchPersistencePort
-                                .searchPage(new BookSearchCriteria(null, "melville", null, null, 0, 10));
+                                .search(new BookSearchCriteria(null, "melville", null, null, 0, 10));
 
                 assertEquals(1, result.items().size());
                 BookSearchResult firstResult = result.items().get(0);
@@ -124,7 +111,7 @@ class BookPersistenceAdapterTest extends AbstractAdapterTest {
         @DisplayName("Should combine filters with AND semantics and return BookSearchResult")
         void testSearchByCombinedFilters() {
                 PaginatedResult<BookSearchResult> result = bookSearchPersistencePort
-                                .searchPage(new BookSearchCriteria(1851, null, "EN", "Moby", 0, 10));
+                                .search(new BookSearchCriteria(1851, null, "EN", "Moby", 0, 10));
 
                 assertEquals(1, result.items().size());
                 BookSearchResult firstResult = result.items().get(0);
@@ -132,7 +119,7 @@ class BookPersistenceAdapterTest extends AbstractAdapterTest {
                 assertEquals(10L, firstResult.authors().get(0).id());
 
                 PaginatedResult<BookSearchResult> emptyResult = bookSearchPersistencePort
-                                .searchPage(new BookSearchCriteria(1851, null, "FR", "Moby", 0, 10));
+                                .search(new BookSearchCriteria(1851, null, "FR", "Moby", 0, 10));
                 assertTrue(emptyResult.items().isEmpty());
         }
 
@@ -140,7 +127,7 @@ class BookPersistenceAdapterTest extends AbstractAdapterTest {
         @DisplayName("Should return BookSearchResult with author references containing id and fullName")
         void testSearchResultContainsAuthorReferences() {
                 PaginatedResult<BookSearchResult> result = bookSearchPersistencePort
-                                .searchPage(new BookSearchCriteria(null, null, null, null, 0, 10));
+                                .search(new BookSearchCriteria(null, null, null, null, 0, 10));
 
                 assertThat(result.items()).isNotEmpty();
                 BookSearchResult firstResult = result.items().get(0);
@@ -155,10 +142,10 @@ class BookPersistenceAdapterTest extends AbstractAdapterTest {
         @Test
         @DisplayName("Should return empty author list for books without author relation")
         void testSearchIncludesBookWithoutAuthors() {
-                List<BookSearchResult> result = bookSearchPersistencePort
-                                .search(new BookSearchCriteria(null, null, null, null));
+                PaginatedResult<BookSearchResult> result = bookSearchPersistencePort
+                                .search(new BookSearchCriteria(null, null, null, null, 0, 10));
 
-                BookSearchResult noAuthorBook = result.stream()
+                BookSearchResult noAuthorBook = result.items().stream()
                                 .filter(book -> "No Author Book".equals(book.title()))
                                 .findFirst()
                                 .orElseThrow();
@@ -169,18 +156,18 @@ class BookPersistenceAdapterTest extends AbstractAdapterTest {
         @Test
         @DisplayName("Should filter out blank author full name entries")
         void testSearchFiltersBlankAuthorFullName() {
-                List<BookSearchResult> result = bookSearchPersistencePort
+                PaginatedResult<BookSearchResult> result = bookSearchPersistencePort
                                 .search(new BookSearchCriteria(null, null, null, "Nameless", 0, 10));
 
-                assertThat(result).hasSize(1);
-                assertThat(result.get(0).title()).isEqualTo("Nameless Author Book");
-                assertThat(result.get(0).authors()).isEmpty();
+                assertThat(result.items()).hasSize(1);
+                assertThat(result.items().get(0).title()).isEqualTo("Nameless Author Book");
+                assertThat(result.items().get(0).authors()).isEmpty();
         }
 
         @Test
-        @DisplayName("Should declare adapter-level pagination method")
-        void testAdapterDeclaresSearchPageMethod() {
-                assertTrue(hasDeclaredSearchPageMethod());
+        @DisplayName("Should declare adapter-level search method")
+        void testAdapterDeclaresSearchMethod() {
+                assertTrue(hasDeclaredSearchMethod());
         }
 
         @Test
@@ -196,9 +183,9 @@ class BookPersistenceAdapterTest extends AbstractAdapterTest {
                 assertFalse(hasDeclaredField("COUNT_SQL"));
         }
 
-        private boolean hasDeclaredSearchPageMethod() {
+        private boolean hasDeclaredSearchMethod() {
                 try {
-                        BookSearchPersistenceAdapter.class.getDeclaredMethod("searchPage", BookSearchCriteria.class);
+                        BookSearchPersistenceAdapter.class.getDeclaredMethod("search", BookSearchCriteria.class);
                         return true;
                 } catch (NoSuchMethodException e) {
                         return false;

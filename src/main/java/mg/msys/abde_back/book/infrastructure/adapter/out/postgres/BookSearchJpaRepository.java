@@ -19,7 +19,7 @@ import mg.msys.abde_back.shared.application.port.in.query.dto.PaginatedResult;
 @Repository
 public class BookSearchJpaRepository {
 
-    private static final String SEARCH_SQL = """
+    private static final String SEARCH_PAGE_SQL = """
             SELECT b.id,
                    b.title,
                    b.issued,
@@ -42,9 +42,8 @@ public class BookSearchJpaRepository {
                              AND (CAST(:title AS TEXT) IS NULL OR b.title ILIKE CONCAT('%', CAST(:title AS TEXT), '%'))
              GROUP BY b.id, b.title, b.issued, b.languages
              ORDER BY b.title
+             LIMIT :size OFFSET :offset
             """;
-
-    private static final String SEARCH_PAGE_SQL = SEARCH_SQL + "\n LIMIT :size OFFSET :offset";
 
     private static final String COUNT_SQL = """
             SELECT COUNT(DISTINCT b.id)
@@ -67,12 +66,7 @@ public class BookSearchJpaRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<BookSearchResult> search(BookSearchCriteria criteria) {
-        Map<String, Object> params = toFilterParams(criteria);
-        return jdbcTemplate.query(SEARCH_SQL, params, bookRowMapper());
-    }
-
-    public PaginatedResult<BookSearchResult> searchPage(BookSearchCriteria criteria) {
+    public PaginatedResult<BookSearchResult> search(BookSearchCriteria criteria) {
         Map<String, Object> params = toFilterParams(criteria);
         params.put("size", criteria.size());
         params.put("offset", criteria.offset());

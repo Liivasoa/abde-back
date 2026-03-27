@@ -61,6 +61,7 @@ You are a senior Software Test Engineer specialized in test-first delivery and v
 - Avoid over-mocking; choose fakes/stubs when clearer.
 - Use broad Spring context only for true integration/system verification.
 - Prioritize risk-based coverage on changed scope.
+- Do not test project structure on unit and integration tests; focus on behavior and contracts.
 
 ## Definition of Done
 

@@ -3,7 +3,6 @@ package mg.msys.abde_back.book.application.port.in.query;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -65,6 +64,7 @@ class SearchBookUseCaseTest {
         assertEquals(null, criteria.title());
         assertEquals(0, criteria.page());
         assertEquals(20, criteria.size());
+        assertEquals(1, fakePort.getSearchCallCount());
     }
 
     @Test
@@ -91,49 +91,5 @@ class SearchBookUseCaseTest {
     void testRejectInvalidYear() {
         assertThrows(IllegalArgumentException.class, () -> useCase.execute(10000, null, null, null, 0, 20));
         assertEquals(0, fakePort.getCallCount());
-    }
-
-    @Test
-    @DisplayName("Should use non paginated search path")
-    void testExecuteNonPaginatedUsesSearchPath() {
-        fakePort.setBooksToReturn(
-                List.of(new BookSearchResult(2L, "Le Petit Prince", LocalDate.of(1943, 4, 6), "FR",
-                        List.of(new BookSearchResult.AuthorReference(12L, "Antoine de Saint-Exupery")))));
-
-        List<BookSearchResult> result = useCase.execute(1943, "Saint", "FR", "Prince");
-
-        assertEquals(1, fakePort.getSearchCallCount());
-        assertEquals(0, fakePort.getSearchPageCallCount());
-        assertEquals(1, result.size());
-        assertEquals("Le Petit Prince", result.get(0).title());
-
-        BookSearchCriteria criteria = fakePort.getLastCriteria();
-        assertNotNull(criteria);
-        assertEquals(1943, criteria.publicationYear());
-        assertEquals("Saint", criteria.authorName());
-        assertEquals("FR", criteria.language());
-        assertEquals("Prince", criteria.title());
-    }
-
-    @Test
-    @DisplayName("Should normalize blank filters on non paginated path")
-    void testExecuteNonPaginatedNormalizesBlankStrings() {
-        useCase.execute(null, "   ", "\t", "");
-
-        BookSearchCriteria criteria = fakePort.getLastCriteria();
-        assertNotNull(criteria);
-        assertEquals(null, criteria.authorName());
-        assertEquals(null, criteria.language());
-        assertEquals(null, criteria.title());
-        assertEquals(0, fakePort.getSearchPageCallCount());
-        assertEquals(1, fakePort.getSearchCallCount());
-    }
-
-    @Test
-    @DisplayName("Should reject invalid publication year on non paginated path")
-    void testRejectInvalidYearNonPaginated() {
-        assertThrows(IllegalArgumentException.class, () -> useCase.execute(-1, null, null, null));
-        assertTrue(fakePort.getSearchCallCount() == 0);
-        assertTrue(fakePort.getSearchPageCallCount() == 0);
     }
 }
