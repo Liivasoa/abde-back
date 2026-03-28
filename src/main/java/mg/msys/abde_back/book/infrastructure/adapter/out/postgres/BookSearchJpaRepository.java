@@ -12,8 +12,8 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import mg.msys.abde_back.book.application.port.in.query.dto.BookSearchCriteria;
-import mg.msys.abde_back.book.application.port.in.query.dto.BookSearchResult;
+import mg.msys.abde_back.book.infrastructure.adapter.out.postgres.model.BookSearchRepositoryCriteria;
+import mg.msys.abde_back.book.infrastructure.adapter.out.postgres.model.BookSearchRepositoryResult;
 import mg.msys.abde_back.shared.application.port.in.query.dto.PaginatedResult;
 
 @Repository
@@ -66,18 +66,18 @@ public class BookSearchJpaRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public PaginatedResult<BookSearchResult> search(BookSearchCriteria criteria) {
+    public PaginatedResult<BookSearchRepositoryResult> search(BookSearchRepositoryCriteria criteria) {
         Map<String, Object> params = toFilterParams(criteria);
         params.put("size", criteria.size());
         params.put("offset", criteria.offset());
 
-        List<BookSearchResult> items = jdbcTemplate.query(SEARCH_PAGE_SQL, params, bookRowMapper());
+        List<BookSearchRepositoryResult> items = jdbcTemplate.query(SEARCH_PAGE_SQL, params, bookRowMapper());
         long total = jdbcTemplate.queryForObject(COUNT_SQL, params, Long.class);
 
         return PaginatedResult.of(items, criteria.page(), criteria.size(), total);
     }
 
-    private Map<String, Object> toFilterParams(BookSearchCriteria criteria) {
+    private Map<String, Object> toFilterParams(BookSearchRepositoryCriteria criteria) {
         Map<String, Object> params = new HashMap<>();
         params.put("publicationYear", criteria.publicationYear());
         params.put("authorName", criteria.authorName());
@@ -86,10 +86,10 @@ public class BookSearchJpaRepository {
         return params;
     }
 
-    private RowMapper<BookSearchResult> bookRowMapper() {
+    private RowMapper<BookSearchRepositoryResult> bookRowMapper() {
         return (rs, rowNum) -> {
             LocalDate issued = rs.getDate("issued") == null ? null : rs.getDate("issued").toLocalDate();
-            return new BookSearchResult(
+            return new BookSearchRepositoryResult(
                     rs.getLong("id"),
                     rs.getString("title"),
                     issued,
@@ -98,7 +98,8 @@ public class BookSearchJpaRepository {
         };
     }
 
-    private List<BookSearchResult.AuthorReference> toAuthorReferences(Array authorIdsArray, Array authorNamesArray)
+    private List<BookSearchRepositoryResult.AuthorReference> toAuthorReferences(Array authorIdsArray,
+            Array authorNamesArray)
             throws SQLException {
         if (authorIdsArray == null || authorNamesArray == null) {
             return List.of();
@@ -111,12 +112,12 @@ public class BookSearchJpaRepository {
         }
 
         int pairCount = Math.min(idValues.length, nameValues.length);
-        List<BookSearchResult.AuthorReference> authors = new ArrayList<>(pairCount);
+        List<BookSearchRepositoryResult.AuthorReference> authors = new ArrayList<>(pairCount);
         for (int i = 0; i < pairCount; i++) {
             Long authorId = toLong(idValues[i]);
             String fullName = nameValues[i] == null ? null : nameValues[i].toString().trim();
             if (authorId != null && fullName != null && !fullName.isEmpty()) {
-                authors.add(new BookSearchResult.AuthorReference(authorId, fullName));
+                authors.add(new BookSearchRepositoryResult.AuthorReference(authorId, fullName));
             }
         }
         return authors;
