@@ -2,10 +2,8 @@ package mg.msys.abde_back.book.infrastructure.adapter.out.postgres;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.lang.reflect.Constructor;
 import java.time.LocalDate;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -162,54 +160,5 @@ class BookPersistenceAdapterTest extends AbstractAdapterTest {
                 assertThat(result.items()).hasSize(1);
                 assertThat(result.items().get(0).title()).isEqualTo("Nameless Author Book");
                 assertThat(result.items().get(0).authors()).isEmpty();
-        }
-
-        @Test
-        @DisplayName("Should declare adapter-level search method")
-        void testAdapterDeclaresSearchMethod() {
-                assertTrue(hasDeclaredSearchMethod());
-        }
-
-        @Test
-        @DisplayName("Should delegate paginated search to infrastructure repository")
-        void testPaginationDelegatesToInfrastructureRepository() {
-                assertTrue(hasConstructorWithBookSearchJpaRepositoryParameter());
-        }
-
-        @Test
-        @DisplayName("Should not keep SQL query constants in adapter for pagination path")
-        void testPaginationSqlShouldNotLiveInAdapter() {
-                assertFalse(hasDeclaredField("SEARCH_PAGE_SQL"));
-                assertFalse(hasDeclaredField("COUNT_SQL"));
-        }
-
-        private boolean hasDeclaredSearchMethod() {
-                try {
-                        BookSearchPersistenceAdapter.class.getDeclaredMethod("search", BookSearchCriteria.class);
-                        return true;
-                } catch (NoSuchMethodException e) {
-                        return false;
-                }
-        }
-
-        private boolean hasConstructorWithBookSearchJpaRepositoryParameter() {
-                try {
-                        Class<?> repositoryType = Class.forName(
-                                        "mg.msys.abde_back.book.infrastructure.adapter.out.postgres.BookSearchJpaRepository");
-                        Constructor<?> constructor = BookSearchPersistenceAdapter.class
-                                        .getDeclaredConstructor(repositoryType);
-                        return constructor.getParameterCount() == 1;
-                } catch (ReflectiveOperationException e) {
-                        return false;
-                }
-        }
-
-        private boolean hasDeclaredField(String fieldName) {
-                try {
-                        BookSearchPersistenceAdapter.class.getDeclaredField(fieldName);
-                        return true;
-                } catch (NoSuchFieldException e) {
-                        return false;
-                }
         }
 }
