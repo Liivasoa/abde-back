@@ -22,13 +22,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
-import mg.msys.abde_back.book.application.port.in.query.dto.BookSearchResult;
-import mg.msys.abde_back.book.infrastructure.adapter.out.postgres.BookSearchJpaRepository;
+import mg.msys.abde_back.book.infrastructure.adapter.out.postgres.model.BookSearchRepositoryResult;
 
 @DisplayName("[Repository] Book Search JPA Repository - RowMapper Tests")
 class BookSearchJpaRepositoryTest {
 
-    private RowMapper<BookSearchResult> rowMapper;
+    private RowMapper<BookSearchRepositoryResult> rowMapper;
     private ResultSet resultSet;
     private BookSearchJpaRepository repository;
 
@@ -41,7 +40,6 @@ class BookSearchJpaRepositoryTest {
     @Test
     @DisplayName("Should create BookSearchResult with AuthorReference list when result set contains author data")
     void testRowMapperCreatesBookSearchResultWithAuthorReferences() throws Exception {
-        // Arrange
         Long[] authorIds = { 10L, 11L };
         String[] authorNames = { "Herman Melville", "George Orwell" };
         Array authorIdsArray = mockArray(authorIds);
@@ -56,9 +54,8 @@ class BookSearchJpaRepositoryTest {
         when(resultSet.getArray("author_names")).thenReturn(authorNamesArray);
 
         rowMapper = invokeBookRowMapper();
-        BookSearchResult result = rowMapper.mapRow(resultSet, 1);
+        BookSearchRepositoryResult result = rowMapper.mapRow(resultSet, 1);
 
-        // Assert
         assertNotNull(result);
         assertEquals(1L, result.id());
         assertEquals("Moby Dick", result.title());
@@ -68,17 +65,16 @@ class BookSearchJpaRepositoryTest {
                 .hasSizeGreaterThan(0)
                 .allMatch(author -> author.id() != null && !author.fullName().isEmpty());
         assertThat(result.authors())
-                .extracting(BookSearchResult.AuthorReference::id)
+                .extracting(BookSearchRepositoryResult.AuthorReference::id)
                 .containsExactly(10L, 11L);
         assertThat(result.authors())
-                .extracting(BookSearchResult.AuthorReference::fullName)
+                .extracting(BookSearchRepositoryResult.AuthorReference::fullName)
                 .containsExactly("Herman Melville", "George Orwell");
     }
 
     @Test
     @DisplayName("Should return empty author list when result set has no authors")
     void testRowMapperHandlesEmptyAuthorList() throws Exception {
-        // Arrange
         when(resultSet.getLong("id")).thenReturn(2L);
         when(resultSet.getString("title")).thenReturn("Unknown Book");
         when(resultSet.getDate("issued")).thenReturn(new java.sql.Date(
@@ -88,9 +84,8 @@ class BookSearchJpaRepositoryTest {
         when(resultSet.getArray("author_names")).thenReturn(null);
 
         rowMapper = invokeBookRowMapper();
-        BookSearchResult result = rowMapper.mapRow(resultSet, 1);
+        BookSearchRepositoryResult result = rowMapper.mapRow(resultSet, 1);
 
-        // Assert
         assertNotNull(result);
         assertNotNull(result.authors());
         assertTrue(result.authors().isEmpty());
@@ -99,9 +94,8 @@ class BookSearchJpaRepositoryTest {
     @Test
     @DisplayName("Should handle null issued date without throwing exception")
     void testRowMapperHandlesNullIssuedDate() throws Exception {
-        // Arrange
         Long[] authorIds = { 12L };
-        String[] authorNames = { "Antoine de Saint-Exupéry" };
+        String[] authorNames = { "Antoine de Saint-Exupery" };
         Array authorIdsArray = mockArray(authorIds);
         Array authorNamesArray = mockArray(authorNames);
 
@@ -113,9 +107,8 @@ class BookSearchJpaRepositoryTest {
         when(resultSet.getArray("author_names")).thenReturn(authorNamesArray);
 
         rowMapper = invokeBookRowMapper();
-        BookSearchResult result = rowMapper.mapRow(resultSet, 1);
+        BookSearchRepositoryResult result = rowMapper.mapRow(resultSet, 1);
 
-        // Assert
         assertNotNull(result);
         assertEquals(3L, result.id());
         assertEquals("Le Petit Prince", result.title());
@@ -127,7 +120,6 @@ class BookSearchJpaRepositoryTest {
     @Test
     @DisplayName("Should validate BookSearchResult invariants")
     void testRowMapperValidatesBookSearchResultInvariants() throws Exception {
-        // Arrange
         Long[] authorIds = { 10L };
         String[] authorNames = { "Herman Melville" };
         Array authorIdsArray = mockArray(authorIds);
@@ -142,9 +134,8 @@ class BookSearchJpaRepositoryTest {
         when(resultSet.getArray("author_names")).thenReturn(authorNamesArray);
 
         rowMapper = invokeBookRowMapper();
-        BookSearchResult result = rowMapper.mapRow(resultSet, 1);
+        BookSearchRepositoryResult result = rowMapper.mapRow(resultSet, 1);
 
-        // Assert
         assertNotNull(result);
         assertNotNull(result.id());
         assertNotNull(result.title());
@@ -155,7 +146,6 @@ class BookSearchJpaRepositoryTest {
     @Test
     @DisplayName("Should correctly match author ids with author names in correct order")
     void testRowMapperMatchesAuthorIdsWithNames() throws Exception {
-        // Arrange
         Long[] authorIds = { 100L, 101L, 102L };
         String[] authorNames = { "Author One", "Author Two", "Author Three" };
         Array authorIdsArray = mockArray(authorIds);
@@ -170,9 +160,8 @@ class BookSearchJpaRepositoryTest {
         when(resultSet.getArray("author_names")).thenReturn(authorNamesArray);
 
         rowMapper = invokeBookRowMapper();
-        BookSearchResult result = rowMapper.mapRow(resultSet, 1);
+        BookSearchRepositoryResult result = rowMapper.mapRow(resultSet, 1);
 
-        // Assert
         assertThat(result.authors()).hasSize(3);
         for (int i = 0; i < 3; i++) {
             assertEquals(authorIds[i], result.authors().get(i).id());
@@ -186,14 +175,15 @@ class BookSearchJpaRepositoryTest {
         Array authorIdsArray = mockArray(new Object[] { 1L, null, 3L, 4L });
         Array authorNamesArray = mockArray(new Object[] { "Author One", " ", "", "Author Four" });
 
-        List<BookSearchResult.AuthorReference> authors = invokeToAuthorReferences(authorIdsArray, authorNamesArray);
+        List<BookSearchRepositoryResult.AuthorReference> authors = invokeToAuthorReferences(authorIdsArray,
+                authorNamesArray);
 
         assertThat(authors).hasSize(2);
         assertThat(authors)
-                .extracting(BookSearchResult.AuthorReference::id)
+                .extracting(BookSearchRepositoryResult.AuthorReference::id)
                 .containsExactly(1L, 4L);
         assertThat(authors)
-                .extracting(BookSearchResult.AuthorReference::fullName)
+                .extracting(BookSearchRepositoryResult.AuthorReference::fullName)
                 .containsExactly("Author One", "Author Four");
     }
 
@@ -203,7 +193,7 @@ class BookSearchJpaRepositoryTest {
         Array idsEmpty = mockArray(new Object[] {});
         Array namesEmpty = mockArray(new Object[] {});
 
-        List<BookSearchResult.AuthorReference> authors = invokeToAuthorReferences(idsEmpty, namesEmpty);
+        List<BookSearchRepositoryResult.AuthorReference> authors = invokeToAuthorReferences(idsEmpty, namesEmpty);
 
         assertThat(authors).isEmpty();
     }
@@ -213,7 +203,7 @@ class BookSearchJpaRepositoryTest {
     void testToAuthorReferencesWithNullIdsArrayOnly() throws Exception {
         Array names = mockArray(new Object[] { "Author" });
 
-        List<BookSearchResult.AuthorReference> authors = invokeToAuthorReferences(null, names);
+        List<BookSearchRepositoryResult.AuthorReference> authors = invokeToAuthorReferences(null, names);
 
         assertThat(authors).isEmpty();
     }
@@ -223,7 +213,7 @@ class BookSearchJpaRepositoryTest {
     void testToAuthorReferencesWithNullNamesArrayOnly() throws Exception {
         Array ids = mockArray(new Object[] { 1L });
 
-        List<BookSearchResult.AuthorReference> authors = invokeToAuthorReferences(ids, null);
+        List<BookSearchRepositoryResult.AuthorReference> authors = invokeToAuthorReferences(ids, null);
 
         assertThat(authors).isEmpty();
     }
@@ -234,7 +224,7 @@ class BookSearchJpaRepositoryTest {
         Array ids = mockArray(null);
         Array names = mockArray(new Object[] { "Author" });
 
-        List<BookSearchResult.AuthorReference> authors = invokeToAuthorReferences(ids, names);
+        List<BookSearchRepositoryResult.AuthorReference> authors = invokeToAuthorReferences(ids, names);
 
         assertThat(authors).isEmpty();
     }
@@ -245,7 +235,7 @@ class BookSearchJpaRepositoryTest {
         Array ids = mockArray(new Object[] { 1L });
         Array names = mockArray(null);
 
-        List<BookSearchResult.AuthorReference> authors = invokeToAuthorReferences(ids, names);
+        List<BookSearchRepositoryResult.AuthorReference> authors = invokeToAuthorReferences(ids, names);
 
         assertThat(authors).isEmpty();
     }
@@ -256,7 +246,7 @@ class BookSearchJpaRepositoryTest {
         Array ids = mockArray(new Object[] { 1L, 2L });
         Array names = mockArray(new Object[] { null, "Author Two" });
 
-        List<BookSearchResult.AuthorReference> authors = invokeToAuthorReferences(ids, names);
+        List<BookSearchRepositoryResult.AuthorReference> authors = invokeToAuthorReferences(ids, names);
 
         assertThat(authors).hasSize(1);
         assertEquals(2L, authors.get(0).id());
@@ -272,20 +262,21 @@ class BookSearchJpaRepositoryTest {
     }
 
     @SuppressWarnings("unchecked")
-    private RowMapper<BookSearchResult> invokeBookRowMapper()
+    private RowMapper<BookSearchRepositoryResult> invokeBookRowMapper()
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         Method method = BookSearchJpaRepository.class.getDeclaredMethod("bookRowMapper");
         method.setAccessible(true);
-        return (RowMapper<BookSearchResult>) method.invoke(repository);
+        return (RowMapper<BookSearchRepositoryResult>) method.invoke(repository);
     }
 
     @SuppressWarnings("unchecked")
-    private List<BookSearchResult.AuthorReference> invokeToAuthorReferences(Array authorIdsArray,
+    private List<BookSearchRepositoryResult.AuthorReference> invokeToAuthorReferences(Array authorIdsArray,
             Array authorNamesArray)
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         Method method = BookSearchJpaRepository.class.getDeclaredMethod("toAuthorReferences", Array.class, Array.class);
         method.setAccessible(true);
-        return (List<BookSearchResult.AuthorReference>) method.invoke(repository, authorIdsArray, authorNamesArray);
+        return (List<BookSearchRepositoryResult.AuthorReference>) method.invoke(repository, authorIdsArray,
+                authorNamesArray);
     }
 
     private Long invokeToLong(Object value)

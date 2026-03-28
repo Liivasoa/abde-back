@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -16,6 +17,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import mg.msys.abde_back.book.application.port.in.query.dto.BookSearchCriteria;
 import mg.msys.abde_back.book.application.port.in.query.dto.BookSearchResult;
 import mg.msys.abde_back.book.application.port.out.BookPersistencePort;
+import mg.msys.abde_back.book.infrastructure.adapter.out.postgres.mapper.BookSearchCriteriaMapper;
+import mg.msys.abde_back.book.infrastructure.adapter.out.postgres.mapper.BookSearchResultMapper;
 import mg.msys.abde_back.shared.application.port.in.query.dto.PaginatedResult;
 import mg.msys.abde_back.shared.infrastructure.adapter.out.postgres.AbstractAdapterTest;
 
@@ -33,7 +36,9 @@ class BookPersistenceAdapterTest extends AbstractAdapterTest {
         @BeforeEach
         void setUp() {
                 this.bookSearchPersistencePort = new BookSearchPersistenceAdapter(
-                                new BookSearchJpaRepository(namedParameterJdbcTemplate));
+                                new BookSearchJpaRepository(namedParameterJdbcTemplate),
+                                Mappers.getMapper(BookSearchCriteriaMapper.class),
+                                Mappers.getMapper(BookSearchResultMapper.class));
 
                 jdbcTemplate.update("INSERT INTO book(id, issued, title, languages, subjects) VALUES (1, ?, ?, ?, ?)",
                                 LocalDate.of(1851, 1, 1), "Moby Dick", "EN", "Sea");
