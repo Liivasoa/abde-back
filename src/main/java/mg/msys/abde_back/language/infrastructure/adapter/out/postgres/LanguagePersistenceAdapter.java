@@ -15,12 +15,14 @@ import mg.msys.abde_back.language.infrastructure.adapter.out.postgres.mapper.Lan
 public class LanguagePersistenceAdapter implements LanguagePersistencePort {
 
     private final LanguageJpaRepository languageJpaRepository;
-
     private final LanguageMapper languageMapper;
+    private final LanguageAvailableJdbcRepository languageAvailableJdbcRepository;
 
-    public LanguagePersistenceAdapter(LanguageJpaRepository languageJpaRepository, LanguageMapper languageMapper) {
+    public LanguagePersistenceAdapter(LanguageJpaRepository languageJpaRepository, LanguageMapper languageMapper,
+            LanguageAvailableJdbcRepository languageAvailableJdbcRepository) {
         this.languageJpaRepository = languageJpaRepository;
         this.languageMapper = languageMapper;
+        this.languageAvailableJdbcRepository = languageAvailableJdbcRepository;
     }
 
     @Override
@@ -38,7 +40,7 @@ public class LanguagePersistenceAdapter implements LanguagePersistencePort {
 
     @Override
     public List<LanguageBookCountResult> findAvailableLanguagesWithBookCount() {
-        throw new UnsupportedOperationException("Not yet implemented");
+        return languageAvailableJdbcRepository.findAvailableLanguagesWithBookCount();
     }
 
 }
