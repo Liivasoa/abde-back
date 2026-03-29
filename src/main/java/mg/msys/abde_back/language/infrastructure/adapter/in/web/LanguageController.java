@@ -3,6 +3,7 @@ package mg.msys.abde_back.language.infrastructure.adapter.in.web;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,12 +16,15 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import mg.msys.abde_back.language.application.port.in.command.CreateLanguageUseCase;
+import mg.msys.abde_back.language.application.port.in.query.ListAvailableLanguagesUseCase;
+import mg.msys.abde_back.language.application.port.in.query.dto.LanguageBookCountResult;
 import mg.msys.abde_back.language.domain.Language;
 import mg.msys.abde_back.language.infrastructure.adapter.in.web.dto.LanguageDto;
 import mg.msys.abde_back.shared.infrastructure.adapter.in.web.dto.ResourceResponse;
 import mg.msys.abde_back.shared.infrastructure.adapter.in.web.dto.ErrorResponse;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/language")
@@ -29,6 +33,17 @@ import java.net.URI;
 public class LanguageController {
 
         private final CreateLanguageUseCase addLanguageUseCase;
+        private final ListAvailableLanguagesUseCase listAvailableLanguagesUseCase;
+
+        @GetMapping
+        @Operation(summary = "List available languages", description = "Returns all languages present in the book catalog with their book count")
+        @ApiResponses(value = {
+                        @ApiResponse(responseCode = "200", description = "List retrieved successfully", content = @Content(mediaType = "application/json", schema = @Schema(implementation = LanguageBookCountResult.class))),
+                        @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+        })
+        public ResponseEntity<List<LanguageBookCountResult>> listAvailableLanguages() {
+                return ResponseEntity.ok(listAvailableLanguagesUseCase.execute());
+        }
 
         @PostMapping
         @Operation(summary = "Create a new language", description = "Creates a new language with the provided code and label")
