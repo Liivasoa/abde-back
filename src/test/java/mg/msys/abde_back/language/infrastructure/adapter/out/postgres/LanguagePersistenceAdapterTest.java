@@ -21,6 +21,7 @@ import mg.msys.abde_back.language.application.port.in.query.dto.LanguageBookCoun
 import mg.msys.abde_back.language.application.port.out.LanguagePersistencePort;
 import mg.msys.abde_back.language.domain.Language;
 import mg.msys.abde_back.language.infrastructure.adapter.out.postgres.mapper.LanguageMapper;
+import mg.msys.abde_back.language.infrastructure.adapter.out.postgres.mapper.LanguageAvailableResultMapper;
 import mg.msys.abde_back.shared.infrastructure.adapter.out.postgres.AbstractAdapterTest;
 
 public class LanguagePersistenceAdapterTest extends AbstractAdapterTest {
@@ -40,10 +41,12 @@ public class LanguagePersistenceAdapterTest extends AbstractAdapterTest {
     @BeforeEach
     void setUp() {
         this.languageMapper = Mappers.getMapper(LanguageMapper.class);
+        var availableResultMapper = Mappers.getMapper(LanguageAvailableResultMapper.class);
         this.languagePersistencePort = new LanguagePersistenceAdapter(
                 languageJpaRepository,
                 languageMapper,
-                new LanguageAvailableJdbcRepository(namedParameterJdbcTemplate));
+                new LanguageAvailableJdbcRepository(namedParameterJdbcTemplate),
+                availableResultMapper);
     }
 
     @Test

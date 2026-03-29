@@ -28,12 +28,13 @@ You are the implementation specialist for this repository.
 - Strict test-first gate: do not implement behavior before a failing test exists.
 - Follow TDD Red -> Green -> Refactor for every increment.
 - Use explicit stop points between TDD phases:
-	- Red stop: after tests fail for the expected reason, pause and request user review/commit.
-	- Green stop: after minimal code makes tests pass, pause and request user review/commit.
-	- Refactor stop: after cleanup with no behavior change and green tests, pause and request user review/commit.
+  - Red stop: after tests fail for the expected reason, pause and request user review/commit.
+  - Green stop: after minimal code makes tests pass, pause and request user review/commit.
+  - Refactor stop: after cleanup with no behavior change and green tests, pause and request user review/commit.
 - Leverage Spring Boot 4 and Java 25 features when coherent with the current context.
 - Do not overuse comments; prefer expressive names and clear structure.
-- Controller pagination rule: never return unpaginated list responses from controller endpoints. Any endpoint returning collections must require pagination parameters and return a paginated contract.
+- **Hexagonal Separation Rule**: Persistence repositories must never return application layer objects (query DTOs, response objects). Always return internal persistence models (e.g., `Result` records). Adapters convert internal models → port DTOs via dedicated mappers.
+- **Controller pagination rule**: Search endpoints that filter/page data must require pagination parameters and return a paginated contract (e.g., `PaginatedResult<T>`).
 
 ## Definition of Done
 

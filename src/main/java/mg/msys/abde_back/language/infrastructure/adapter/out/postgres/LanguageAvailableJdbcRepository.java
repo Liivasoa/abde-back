@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import mg.msys.abde_back.language.application.port.in.query.dto.LanguageBookCountResult;
+import mg.msys.abde_back.language.infrastructure.adapter.out.postgres.model.LanguageAvailableResult;
 
 @Repository
 public class LanguageAvailableJdbcRepository {
@@ -27,8 +27,8 @@ public class LanguageAvailableJdbcRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<LanguageBookCountResult> findAvailableLanguagesWithBookCount() {
-        return jdbcTemplate.query(AVAILABLE_LANGUAGES_SQL, (rs, rowNum) -> new LanguageBookCountResult(
+    public List<LanguageAvailableResult> findAvailableLanguagesWithBookCount() {
+        return jdbcTemplate.query(AVAILABLE_LANGUAGES_SQL, (rs, rowNum) -> new LanguageAvailableResult(
                 rs.getString("code"),
                 rs.getString("label"),
                 rs.getLong("book_count")));
