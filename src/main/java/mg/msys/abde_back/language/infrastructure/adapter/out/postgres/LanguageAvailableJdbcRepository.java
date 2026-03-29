@@ -15,10 +15,10 @@ public class LanguageAvailableJdbcRepository {
                    COALESCE(l.label, UPPER(BTRIM(lang_code)))           AS label,
                    COUNT(DISTINCT b.id)                                  AS book_count
               FROM book b,
-                   regexp_split_to_table(b.languages, ',') AS lang_code
+                   regexp_split_to_table(b.languages, ';') AS lang_code
               LEFT JOIN language l ON l.code = UPPER(BTRIM(lang_code))
              GROUP BY UPPER(BTRIM(lang_code)), l.label
-             ORDER BY UPPER(BTRIM(lang_code))
+               ORDER BY book_count DESC, code ASC
             """;
 
     private final NamedParameterJdbcTemplate jdbcTemplate;

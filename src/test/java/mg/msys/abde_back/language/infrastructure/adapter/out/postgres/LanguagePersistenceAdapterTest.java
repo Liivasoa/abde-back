@@ -153,7 +153,7 @@ public class LanguagePersistenceAdapterTest extends AbstractAdapterTest {
         jdbcTemplate.update("INSERT INTO book(id, issued, title, languages, subjects) VALUES (102, ?, ?, ?, ?)",
                 LocalDate.of(2022, 1, 1), "Book FR", "FR", "subject");
         jdbcTemplate.update("INSERT INTO book(id, issued, title, languages, subjects) VALUES (103, ?, ?, ?, ?)",
-                LocalDate.of(2023, 1, 1), "Book EN+FR", "EN,FR", "subject");
+                LocalDate.of(2023, 1, 1), "Book EN+FR", "EN;FR", "subject");
 
         jdbcTemplate.update("INSERT INTO language(code, label) VALUES (?, ?)", "EN", "English");
 
