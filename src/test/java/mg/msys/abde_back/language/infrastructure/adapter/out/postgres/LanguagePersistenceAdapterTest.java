@@ -1,16 +1,23 @@
 package mg.msys.abde_back.language.infrastructure.adapter.out.postgres;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.time.LocalDate;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
+import mg.msys.abde_back.language.application.port.in.query.dto.LanguageBookCountResult;
 import mg.msys.abde_back.language.application.port.out.LanguagePersistencePort;
 import mg.msys.abde_back.language.domain.Language;
 import mg.msys.abde_back.language.infrastructure.adapter.out.postgres.mapper.LanguageMapper;
@@ -21,13 +28,22 @@ public class LanguagePersistenceAdapterTest extends AbstractAdapterTest {
     @Autowired
     private LanguageJpaRepository languageJpaRepository;
 
+    @Autowired
+    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
     private LanguageMapper languageMapper;
     private LanguagePersistencePort languagePersistencePort;
 
     @BeforeEach
     void setUp() {
         this.languageMapper = Mappers.getMapper(LanguageMapper.class);
-        this.languagePersistencePort = new LanguagePersistenceAdapter(languageJpaRepository, languageMapper);
+        this.languagePersistencePort = new LanguagePersistenceAdapter(
+                languageJpaRepository,
+                languageMapper,
+                new LanguageAvailableJdbcRepository(namedParameterJdbcTemplate));
     }
 
     @Test
@@ -125,6 +141,35 @@ public class LanguagePersistenceAdapterTest extends AbstractAdapterTest {
         assertThrows(IllegalArgumentException.class, () -> {
             new Language("   ", "English");
         });
+    }
+
+    @Test
+    @DisplayName("Should return available languages with book count from book.languages column")
+    void testFindAvailableLanguagesWithBookCount() {
+        jdbcTemplate.update("INSERT INTO book(id, issued, title, languages, subjects) VALUES (100, ?, ?, ?, ?)",
+                LocalDate.of(2020, 1, 1), "Book EN 1", "EN", "subject");
+        jdbcTemplate.update("INSERT INTO book(id, issued, title, languages, subjects) VALUES (101, ?, ?, ?, ?)",
+                LocalDate.of(2021, 1, 1), "Book EN 2", "EN", "subject");
+        jdbcTemplate.update("INSERT INTO book(id, issued, title, languages, subjects) VALUES (102, ?, ?, ?, ?)",
+                LocalDate.of(2022, 1, 1), "Book FR", "FR", "subject");
+        jdbcTemplate.update("INSERT INTO book(id, issued, title, languages, subjects) VALUES (103, ?, ?, ?, ?)",
+                LocalDate.of(2023, 1, 1), "Book EN+FR", "EN,FR", "subject");
+
+        jdbcTemplate.update("INSERT INTO language(code, label) VALUES (?, ?)", "EN", "English");
+
+        List<LanguageBookCountResult> result = languagePersistencePort.findAvailableLanguagesWithBookCount();
+
+        assertThat(result).isNotEmpty();
+        LanguageBookCountResult en = result.stream().filter(r -> "EN".equals(r.code())).findFirst().orElseThrow();
+        LanguageBookCountResult fr = result.stream().filter(r -> "FR".equals(r.code())).findFirst().orElseThrow();
+
+        assertEquals("EN", en.code());
+        assertEquals("English", en.label());
+        assertEquals(3, en.bookCount());
+
+        assertEquals("FR", fr.code());
+        assertEquals("FR", fr.label());
+        assertEquals(2, fr.bookCount());
     }
 
 }
