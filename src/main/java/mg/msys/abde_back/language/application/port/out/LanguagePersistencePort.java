@@ -1,7 +1,9 @@
 package mg.msys.abde_back.language.application.port.out;
 
+import java.util.List;
 import java.util.Optional;
 
+import mg.msys.abde_back.language.application.port.in.query.dto.LanguageBookCountResult;
 import mg.msys.abde_back.language.domain.Language;
 
 /**
@@ -20,4 +22,6 @@ public interface LanguagePersistencePort {
     Language save(Language language);
 
     Optional<Language> findByCode(String code);
+
+    List<LanguageBookCountResult> findAvailableLanguagesWithBookCount();
 }
